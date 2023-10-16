@@ -10,7 +10,10 @@ import Data.Tree
 import GHC.Core.TyCon (newTyConEtadArity)
 import System.Random
 
-data NodeType = FightNode | PlatformNode | RandomNode
+newtype Object = Obj String
+  deriving (Show)
+
+data NodeType = FightNode {fightText :: String, defeatedText :: String, lifepoints :: Int, object :: Object} | PlatformNode | RandomNode
   deriving (Show)
 
 data TreeNode = TreeNode
