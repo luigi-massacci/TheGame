@@ -27,3 +27,7 @@ data TreeNode = TreeNode
   deriving (Show)
 
 data GameInstance = Game {tree :: Tree TreeNode, player :: Player}
+
+data ActionType = Attack | Move | Look
+
+data Action = Act ActionType String
