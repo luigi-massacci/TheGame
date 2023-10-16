@@ -28,6 +28,6 @@ data TreeNode = TreeNode
 
 data GameInstance = Game {tree :: Tree TreeNode, player :: Player}
 
-data ActionType = Attack | Move | Look
+data AttackType = Rock | Paper | Scissors
 
-data Action = Act ActionType String
+data Action = Attack AttackType | Move String | Look
