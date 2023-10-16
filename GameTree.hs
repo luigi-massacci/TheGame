@@ -10,5 +10,7 @@ import Data.Tree
 import GHC.Core.TyCon (newTyConEtadArity)
 import System.Random ()
 import Types
+import Nodes
 
-gameTree :: Tree TreeNode = Node (TreeNode "Midgard" PlatformNode "You've reached Asgard, home of the gods!") []
+-- pre-generated game tree structure
+gameTree :: Tree TreeNode = Node (root) []
