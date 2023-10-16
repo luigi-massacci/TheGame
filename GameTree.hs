@@ -8,9 +8,9 @@ import Data.List
 import Data.Set (fromList)
 import Data.Tree
 import GHC.Core.TyCon (newTyConEtadArity)
+import Nodes
 import System.Random ()
 import Types
-import Nodes
 
 -- pre-generated game tree structure
 gameTree :: Tree TreeNode = Node (root) [Node root [], Node midgard []]
