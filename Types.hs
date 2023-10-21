@@ -26,6 +26,18 @@ data TreeNode = TreeNode
   }
   deriving (Show)
 
+
+newtype Dir = LL | L | R | RR
+
+data QuadTree a = Leaf | Node a (QuadTree a) (QuadTree a) (QuadTree a) (QuadTree a)
+
+data Context a = Branch | LL (Context a) (QuadTree a) (QuadTree a) (QuadTree a) | L (QuadTree a) (Context a) (QuadTree a) (QuadTree a) | R (QuadTree a) (QuadTree a) (Context a) (QuadTree a) | RR (QuadTree a) (QuadTree a) (QuadTree a) (Context a)
+
+data TreeZip a = {context : Context a, tree : QuadTree a}
+
+
+
+
 data GameInstance = Game {tree :: Tree TreeNode, player :: Player}
 
 data AttackType = Rock | Paper | Scissors
