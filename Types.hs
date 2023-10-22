@@ -1,6 +1,7 @@
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 
 {-# HLINT ignore "Use newtype instead of data" #-}
+{-# HLINT ignore "Redundant bracket" #-}
 
 module Types where
 
@@ -14,6 +15,7 @@ newtype Object = Obj String
   deriving (Show)
 
 data Player = Player {life :: Int, inventory :: [Object]}
+  deriving (Show)
 
 data NodeType = FightNode {fightText :: String, defeatedText :: String, lifepoints :: Int, object :: Object} | PlatformNode | RandomNode
   deriving (Show)
@@ -28,14 +30,17 @@ data TreeNode = TreeNode
 
 
 
-data QuadTree a = Leaf | Node {label : a, ll : (QuadTree a), l : (QuadTree a), r : (QuadTree a), rr : (QuadTree a)}
-
-data Context a = TOP | LL a (Context a) (QuadTree a) (QuadTree a) (QuadTree a) | L a (QuadTree a) (Context a) (QuadTree a) (QuadTree a) | R a (QuadTree a) (QuadTree a) (Context a) (QuadTree a) | RR a (QuadTree a) (QuadTree a) (QuadTree a) (Context a)
-
-data TreeZip a = TreeZip {context : Context a, tree : QuadTree a}
+data QuadTree a = Leaf | Node {label :: a, ll :: (QuadTree a), l :: (QuadTree a), r :: (QuadTree a), rr :: (QuadTree a)}
   deriving (Show)
 
-data GameInstance = Game {tree :: TreeZip TreeNode, player :: Player}
+data Context a = TOP | LL a (Context a) (QuadTree a) (QuadTree a) (QuadTree a) | L a (QuadTree a) (Context a) (QuadTree a) (QuadTree a) | R a (QuadTree a) (QuadTree a) (Context a) (QuadTree a) | RR a (QuadTree a) (QuadTree a) (QuadTree a) (Context a)
+  deriving (Show)
+
+data TreeZip a = TreeZip {context :: Context a, tree :: QuadTree a}
+  deriving (Show)
+
+data GameInstance = Game {gametree :: TreeZip TreeNode, player :: Player}
+  deriving (Show)
 
 data AttackType = Rock | Paper | Scissors
 
