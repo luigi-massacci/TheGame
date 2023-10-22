@@ -48,14 +48,15 @@ modify_pos :: TreeZip TreeNode -> TreeNode -> TreeZip TreeNode
 modify_pos (TreeZip ctx Leaf) t = (TreeZip ctx (Node t Leaf Leaf Leaf Leaf))
 modify_pos (TreeZip ctx (Node lab ll l r rr)) t = (TreeZip ctx (Node t ll l r rr))
 
-authorizedMove :: TreeZip TreeNode -> Bool
-authorizedMove _ = True
+-- Tells if you are allowed to go to the node in the current GameInstance
+authorizedMove :: GameInstance -> TreeZip TreeNode -> Bool
+authorizedMove _ _ = True
 
 act :: Action -> GameInstance -> IO GameInstance
 act Help game = return game
 act Look game = return game
 act (Move s) (Game t p) = case take_path t s of
                             Nothing -> return (Game t p)
-                            Just nt -> if authorizedMove nt then return (Game nt p) else do { putStrLn "You are not worthy enough to do this right now...\n";
-                                                                                              return (Game t p)}        
+                            Just nt -> if authorizedMove (Game t p) nt then return (Game nt p) else do {putStrLn "You are not worthy enough to do this right now...\n";
+                                                                                                        return (Game t p)}        
 act (Attack t) game = undefined -- TODO
