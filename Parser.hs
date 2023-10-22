@@ -14,6 +14,7 @@ parse s
   | take 6 s == "go to " = Just (Move (drop 6 s))
   | take 4 s == "look" = Just Look
   | take 4 s == "help" = Just Help
+  | take 8 s == "show map" = Just ShowMap
   | otherwise = case s of
       "rock" -> Just (Attack Rock)
       "paper" -> Just (Attack Paper)

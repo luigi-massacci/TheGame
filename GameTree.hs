@@ -4,6 +4,7 @@
 
 module Game where
 
+import Constants
 import Data.List
 import Data.Set (fromList)
 import GHC.Core.TyCon (newTyConEtadArity)
@@ -15,8 +16,6 @@ import Types
 -- pre-generated game tree structure
 endNode :: a -> QuadTree a
 endNode x = Node x Leaf Leaf Leaf Leaf
-
-_HELP_MESSAGE :: String = "u need help? sad 4 u we don't have this here"
 
 gameTree :: TreeZip TreeNode =
   TreeZip
@@ -58,11 +57,14 @@ askAction = do
     Nothing -> do putStrLn "Not a valid action"; askAction
     Just a -> return a
 
+displayMap :: GameInstance -> IO ()
+displayMap = undefined
+
 -- Runs the main game loop
 gameLoop :: GameInstance -> IO GameInstance
-gameLoop g = do
-  putStrLn (msg (label (tree (gamezip g))))
-  case nodetype (label (tree (gamezip g))) of
+gameLoop current_game = do
+  putStrLn (msg (label (tree (gamezip current_game))))
+  case nodetype (label (tree (gamezip current_game))) of
     FightNode fightT defeatT life lifeName (Obj drop) ->
       if life > 0
         then do
@@ -74,8 +76,9 @@ gameLoop g = do
   action <- askAction
   case action of
     Help -> putStrLn ("\n" ++ _HELP_MESSAGE ++ "\n")
+    ShowMap -> displayMap current_game
     _ -> putStrLn ""
-  gameLoop (act action g)
+  gameLoop (act action current_game)
 
 -- we need smth like 'entry' which runs when we enter the node
 runGame :: IO ()
