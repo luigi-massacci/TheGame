@@ -11,6 +11,7 @@ parse s
   | take 7 s == "go back" = Just (Move "back")
   | take 6 s == "go to " = Just (Move (drop 6 s))
   | take 4 s == "look" = Just Look
+  | take 4 s == "help" = Just Help
   | otherwise = case s of
       "rock"    -> Just (Attack Rock)
       "paper"   -> Just (Attack Paper)
@@ -52,6 +53,7 @@ modify_pos (TreeZip ctx (Node lab ll l r rr)) t = (TreeZip ctx (Node t ll l r rr
 
 
 act :: Action -> GameInstance -> GameInstance
+act Help game = game
 act Look game = game
 act (Move s) (Game t p) = case take_path t s of
                             Just nt -> Game nt p

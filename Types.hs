@@ -45,4 +45,4 @@ data GameInstance = Game {gamezip :: TreeZip TreeNode, player :: Player}
 
 data AttackType = Rock | Paper | Scissors
 
-data Action = Attack AttackType | Move String | Look
+data Action = Attack AttackType | Move String | Look | Help
