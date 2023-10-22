@@ -17,6 +17,7 @@ newtype Object = Obj String
 data Player = Player {life :: Int, inventory :: [Object]}
   deriving (Show)
 
+-- lifeName?
 data NodeType = FightNode {fightText :: String, defeatedText :: String, lifepoints :: Int, lifeName :: String, object :: Object} | PlatformNode | RandomNode
   deriving (Show)
 
@@ -29,8 +30,7 @@ data TreeNode = TreeNode
   }
   deriving (Show)
 
-
-
+-- change <label> to something else
 data QuadTree a = Leaf | Node {label :: a, ll :: (QuadTree a), l :: (QuadTree a), r :: (QuadTree a), rr :: (QuadTree a)}
   deriving (Show)
 
@@ -45,4 +45,4 @@ data GameInstance = Game {gamezip :: TreeZip TreeNode, player :: Player}
 
 data AttackType = Rock | Paper | Scissors
 
-data Action = Attack AttackType | Move String | Look
+data Action = Attack AttackType | Move String | Look | Help
