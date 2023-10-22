@@ -14,7 +14,7 @@ import System.Random
 newtype Object = Obj String
   deriving (Show, Eq)
 
-data Player = Player {life :: Int, inventory :: [Object]}
+data Player = Player {life :: Int, attack :: Int, inventory :: [Object]}
   deriving (Show)
 
 -- lifeName?
@@ -45,5 +45,6 @@ data GameInstance = Game {gamezip :: TreeZip TreeNode, player :: Player}
   deriving (Show)
 
 data AttackType = Rock | Paper | Scissors
+  deriving (Show, Eq)
 
 data Action = Attack AttackType | Move String | Look | Help | ShowMap

@@ -27,7 +27,12 @@ gameTree :: TreeZip TreeNode =
         Leaf
         ( Node
             root
-            (endNode muspelheim)
+            ( Node
+                muspelheim
+                (endNode giantFight)
+                Leaf
+                Leaf
+                Leaf)
             Leaf
             Leaf
             ( Node
@@ -73,18 +78,19 @@ gameLoop current_game = do
           putStrLn ("It carries around a " ++ drop)
           putStrLn ("It seems to have " ++ show life ++ " " ++ lifeName ++ " left.")
         else putStrLn defeatT
-    PlatformNode -> mapM_ putStrLn (displayChildren (tree (gamezip g)))
+    PlatformNode -> mapM_ putStrLn (displayChildren (tree (gamezip current_game)))
   action <- askAction
   case action of
     Help -> putStrLn ("\n" ++ _HELP_MESSAGE ++ "\n")
     ShowMap -> displayMap current_game
     _ -> putStrLn ""
-  gameLoop (act action current_game)
+  new_game <- act action current_game
+  gameLoop new_game
 
 -- we need smth like 'entry' which runs when we enter the node
 runGame :: IO ()
 runGame = do
   putStrLn "\nWelcome to Binary Tree World."
-  beginningGameInstance <- act (Move "Root") (Game gameTree (Player 5 []))
+  beginningGameInstance <- act (Move "Root") (Game gameTree (Player 10 1 []))
   gameLoop beginningGameInstance
   return ()

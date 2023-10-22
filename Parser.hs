@@ -7,6 +7,9 @@ module Parser where
 import Types
 import Data.List
 
+import System.Random
+import GHC.Utils.Panic.Plain (PlainGhcException)
+
 -- Good
 parse :: String -> Maybe Action
 parse "" = Nothing
@@ -53,7 +56,36 @@ modify_pos (TreeZip ctx (Node lab ll l r rr)) t = (TreeZip ctx (Node t ll l r rr
 -- Tells if you are allowed to go to the node in the current GameInstance
 authorizedMove :: Player -> TreeZip TreeNode -> Bool
 authorizedMove _ (TreeZip ctx Leaf) = False -- Can't go to leaves, should not happen anyway
-authorizedMove (Player l inv) (TreeZip ctx (Node n a b c d)) = intersect (necessary_items n) (inv) == necessary_items n
+authorizedMove (Player l att inv) (TreeZip ctx (Node n a b c d)) = intersect (necessary_items n) (inv) == necessary_items n
+
+
+-- Determines the cycle of attack winners
+wins :: AttackType -> AttackType -> Maybe Bool -- wins Rock Scissors -> True
+wins a b
+  | (a==b) = Nothing
+  | (a==Rock && b==Scissors) || (a==Scissors && b==Paper) || (a==Paper && b==Rock) = Just True
+  | otherwise = Just False
+
+-- Modify ennemy life
+damage :: QuadTree TreeNode -> Int -> QuadTree TreeNode
+damage (Node (TreeNode n (FightNode ft dt life ln ob) msg p i) j k l m) d = (Node (TreeNode n (FightNode ft dt (life - d) ln ob) msg p i) j k l m)
+damage a i = a
+
+-- Checks ennemy death and adds object to the player inventory
+checkDeath :: Player -> Int -> Object -> IO Player 
+checkDeath p life (Obj "") = if attack p <life then return p else do {
+                                                putStrLn "You defeated your ennemy !";
+                                                return p}
+checkDeath (Player l att inv) life (Obj s) =  if att<life then return (Player l att inv) else do {
+                                                putStrLn "You defeated your ennemy !";
+                                                putStrLn ("You received the " ++ s ++ ", well done !");
+                                                addEffect (Player l att (Obj s:inv)) s}
+
+-- Adds object effect to the player
+addEffect :: Player -> String -> IO Player
+addEffect (Player life att inv) s = case s of
+  "stone pickaxe" -> do {putStrLn "It gives you more strength !"; return (Player life (att+1) inv)}
+  _ -> return (Player life att inv)
 
 act :: Action -> GameInstance -> IO GameInstance
 act Help game = return game
@@ -61,5 +93,23 @@ act Look game = return game
 act (Move s) (Game t p) = case take_path t s of
                             Nothing -> return (Game t p)
                             Just nt -> if authorizedMove p nt then return (Game nt p) else do {putStrLn "You are not worthy enough to do this right now...\n";
-                                                                                                        return (Game t p)}        
-act (Attack t) game = undefined -- TODO
+                                                                                                        return (Game t p)}
+act (Attack t) (Game zip p) =
+  case tree zip of
+    Node (TreeNode _ (FightNode _ _ lifepoints _ obj) _ _ _) _ _ _ _ -> if lifepoints <= 0 then return (Game zip p) else do
+      move_int <- randomRIO(1, 3) :: IO Int
+      let ennemy_move = ( case move_int of
+                                    1 -> Rock
+                                    2 -> Paper
+                                    3 -> Scissors)
+      putStrLn ("Your ennemy plays " ++ show ennemy_move)
+      case wins t ennemy_move of
+        Just True -> do { putStrLn ("You win ! You hurt him of " ++ show (attack p));
+                          np <- checkDeath p lifepoints obj;
+                          return (Game (TreeZip (context zip) (damage (tree zip) (attack np))) np)}
+        Nothing -> do { putStrLn "It's a draw..."; return (Game zip p)}
+        Just False -> do {putStrLn ("It hurts you ! You have " ++ show ((life p) - 1) ++ " prayers to Odin left.");
+                          return (Game zip (Player ((life p)-1) (attack p) (inventory p)))}
+    _ -> return (Game zip p)
+
+
