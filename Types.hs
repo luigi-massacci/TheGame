@@ -39,7 +39,7 @@ data Context a = TOP | LL a (Context a) (QuadTree a) (QuadTree a) (QuadTree a) |
 data TreeZip a = TreeZip {context :: Context a, tree :: QuadTree a}
   deriving (Show)
 
-data GameInstance = Game {gametree :: TreeZip TreeNode, player :: Player}
+data GameInstance = Game {gamezip :: TreeZip TreeNode, player :: Player}
   deriving (Show)
 
 data AttackType = Rock | Paper | Scissors

@@ -55,7 +55,9 @@ modify_pos (TreeZip ctx Leaf) t = (TreeZip ctx (Node t Leaf Leaf Leaf Leaf))
 modify_pos (TreeZip ctx (Node lab ll l r rr)) t = (TreeZip ctx (Node t ll l r rr))
 
 
-act :: Action -> GameInstance -> Maybe GameInstance -- "Nothing" would mean nothing happened; but we could also return the same gameinstance
-act Look game = Just game
-act (Move s) (Game t p) = do {nt <- take_path t s; Just (Game nt p)} 
+act :: Action -> GameInstance -> GameInstance
+act Look game = game
+act (Move s) (Game t p) = case take_path t s of
+                            Just nt -> Game nt p
+                            Nothing -> Game t p
 act (Attack t) game = undefined -- TODO this
