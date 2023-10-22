@@ -64,12 +64,14 @@ gameLoop g = do
     case action of
         Help -> putStrLn ("\n" ++ _HELP_MESSAGE ++ "\n")
         _ -> putStrLn ""
-    gameLoop (act action g)
+    newGameInstance <- act action g
+    gameLoop newGameInstance
 
 
 -- we need smth like 'entry' which runs when we enter the node
 runGame :: IO ()
 runGame = do
     putStrLn "\nWelcome to Binary Tree World."
-    gameLoop (act (Move "Root") (Game gameTree (Player 5 [])))
+    beginningGameInstance <- act (Move "Root") (Game gameTree (Player 5 []))
+    gameLoop beginningGameInstance
     return ()
