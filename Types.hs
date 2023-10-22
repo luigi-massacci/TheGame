@@ -12,7 +12,7 @@ import GHC.Core.TyCon (newTyConEtadArity)
 import System.Random
 
 newtype Object = Obj String
-  deriving (Show)
+  deriving (Show, Eq)
 
 data Player = Player {life :: Int, inventory :: [Object]}
   deriving (Show)
@@ -25,7 +25,8 @@ data TreeNode = TreeNode
   { name :: String,
     nodetype :: NodeType,
     msg :: String,
-    previewmsg :: String -- What will be shown from the parent node
+    previewmsg :: String, -- What will be shown from the parent node
+    necessary_items :: [Object]
     -- parent :: Maybe (Tree TreeNode) -- change on move function -- zippers later
   }
   deriving (Show)
