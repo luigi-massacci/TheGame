@@ -10,11 +10,11 @@ parse "" = Nothing
 parse s
   | take 7 s == "go back" = Just (Move "back")
   | take 6 s == "go to " = Just (Move (drop 6 s))
+  | take 4 s == "look" = Just Look
   | otherwise = case s of
       "rock"    -> Just (Attack Rock)
       "paper"   -> Just (Attack Paper)
       "scissors"-> Just (Attack Scissors)
-      "look" -> Just Look
       _ -> Nothing
 
 

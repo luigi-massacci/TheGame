@@ -17,14 +17,24 @@ import Parser
 endNode :: a -> QuadTree a
 endNode x = Node x Leaf Leaf Leaf Leaf
 
-gameTree :: TreeZip TreeNode = TreeZip TOP 
-    (Node helheim Leaf Leaf Leaf 
-        (Node root 
+gameTree :: TreeZip TreeNode = TreeZip TOP
+    (Node helheim Leaf Leaf Leaf
+        (Node root
             (endNode muspelheim) Leaf Leaf
-            (Node midgard 
+            (Node midgard
                 (endNode swartelheim)
                 (endNode asgard)
                 (endNode alvheim) Leaf)))
+
+
+-- Show children
+previewTree :: QuadTree TreeNode -> [String]
+previewTree Leaf = []
+previewTree (Node lab _ _ _ _) = [previewmsg lab]
+
+displayChildren :: QuadTree TreeNode -> [String]
+displayChildren Leaf = []
+displayChildren (Node a ll l r rr) = previewTree ll ++ previewTree l ++ previewTree r ++ previewTree rr
 
 
 -- Gets user input 
@@ -33,13 +43,19 @@ askAction = do
     input <- getLine
     case parse input of
         Nothing -> do {putStrLn "Not a valid action"; askAction}
-        Just a -> return a         
+        Just a -> return a
 
 
 -- Runs the main game loop
 gameLoop :: GameInstance -> IO GameInstance
 gameLoop g = do
-    putStrLn (msg (label (tree (gamezip g))))
+    putStrLn ("\n" ++ msg (label (tree (gamezip g))))
+    case nodetype (label (tree (gamezip g))) of
+        FightNode fightT defeatT life lifeName drop ->  if life>0 then do
+                                                            putStrLn fightT;
+                                                            putStrLn ("It seems to have " ++ show life ++ " " ++ lifeName ++ " left.")
+                                                        else putStrLn defeatT
+        PlatformNode -> mapM_ putStrLn (displayChildren (tree (gamezip g)))
     action <- askAction
     gameLoop (act action g)
 
@@ -47,8 +63,6 @@ gameLoop g = do
 -- we need smth like 'entry' which runs when we enter the node
 runGame :: IO ()
 runGame = do
-    putStrLn "Welcome to Binary Tree World.\n"
-    putStrLn "You are at the root of an ancient binary tree."
+    putStrLn "\nWelcome to Binary Tree World."
     gameLoop (Game gameTree (Player 5 []))
     return ()
-    

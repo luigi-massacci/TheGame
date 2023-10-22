@@ -17,13 +17,14 @@ newtype Object = Obj String
 data Player = Player {life :: Int, inventory :: [Object]}
   deriving (Show)
 
-data NodeType = FightNode {fightText :: String, defeatedText :: String, lifepoints :: Int, object :: Object} | PlatformNode | RandomNode
+data NodeType = FightNode {fightText :: String, defeatedText :: String, lifepoints :: Int, lifeName :: String, object :: Object} | PlatformNode | RandomNode
   deriving (Show)
 
 data TreeNode = TreeNode
   { name :: String,
     nodetype :: NodeType,
-    msg :: String
+    msg :: String,
+    previewmsg :: String -- What will be shown from the parent node
     -- parent :: Maybe (Tree TreeNode) -- change on move function -- zippers later
   }
   deriving (Show)
