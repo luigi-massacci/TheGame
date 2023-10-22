@@ -19,8 +19,9 @@ endNode x = Node x Leaf Leaf Leaf Leaf
 
 gameTree :: TreeZip TreeNode = TreeZip TOP
     (Node helheim Leaf Leaf Leaf
-        (Node root
-            (endNode muspelheim) Leaf Leaf
+        (Node root Leaf Leaf
+            (Node muspelheim Leaf Leaf Leaf
+                (endNode giantFight))            
             (Node midgard
                 (endNode swartelheim)
                 (endNode asgard)
@@ -51,8 +52,9 @@ gameLoop :: GameInstance -> IO GameInstance
 gameLoop g = do
     putStrLn ("\n" ++ msg (label (tree (gamezip g))))
     case nodetype (label (tree (gamezip g))) of
-        FightNode fightT defeatT life lifeName drop ->  if life>0 then do
+        FightNode fightT defeatT life lifeName (Obj drop) ->  if life>0 then do
                                                             putStrLn fightT;
+                                                            putStrLn ("It carries around a " ++ drop)
                                                             putStrLn ("It seems to have " ++ show life ++ " " ++ lifeName ++ " left.")
                                                         else putStrLn defeatT
         PlatformNode -> mapM_ putStrLn (displayChildren (tree (gamezip g)))
@@ -64,5 +66,5 @@ gameLoop g = do
 runGame :: IO ()
 runGame = do
     putStrLn "\nWelcome to Binary Tree World."
-    gameLoop (Game gameTree (Player 5 []))
+    gameLoop (act (Move "Root") (Game gameTree (Player 5 [])))
     return ()
