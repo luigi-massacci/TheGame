@@ -27,6 +27,8 @@ helheim :: TreeNode = TreeNode "Helheim" PlatformNode "You've reached Helheim, l
 
 alvheim :: TreeNode = TreeNode "Alfheim" PlatformNode "You've reached Alvehim, land of the elves" "This forest looks deep and dangerous. This is not what you would expect Alfheim to look like"
 
+giantFight :: TreeNode = TreeNode "Giant House" (FightNode "Oh god, there's a fire giant in front of you. It is big." "The fire giant's dead body in front of you. It actually looks like the mountains surrounding. This creeps you out." 5 "hearts" (Obj "stone pickaxe")) "There's a giant stone house in front of you" "You can distinguish some kind of Giant House in the distance"
+
 {-
 yggdrasil :: Tree TreeNode =
   Node
