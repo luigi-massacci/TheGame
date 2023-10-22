@@ -6,12 +6,11 @@ module Game where
 
 import Data.List
 import Data.Set (fromList)
---import Data.Tree
 import GHC.Core.TyCon (newTyConEtadArity)
 import Nodes
+import Parser
 import System.Random ()
 import Types
-import Parser
 
 -- pre-generated game tree structure
 endNode :: a -> QuadTree a
@@ -19,16 +18,28 @@ endNode x = Node x Leaf Leaf Leaf Leaf
 
 _HELP_MESSAGE :: String = "u need help? sad 4 u we don't have this here"
 
-gameTree :: TreeZip TreeNode = TreeZip TOP
-    (Node helheim Leaf Leaf Leaf
-        (Node root Leaf Leaf
-            (Node muspelheim Leaf Leaf Leaf
-                (endNode giantFight))            
-            (Node midgard
+gameTree :: TreeZip TreeNode =
+  TreeZip
+    TOP
+    ( Node
+        helheim
+        Leaf
+        Leaf
+        Leaf
+        ( Node
+            root
+            (endNode muspelheim)
+            Leaf
+            Leaf
+            ( Node
+                midgard
                 (endNode swartelheim)
                 (endNode asgard)
-                (endNode alvheim) Leaf)))
-
+                (endNode alvheim)
+                Leaf
+            )
+        )
+    )
 
 -- Show children
 previewTree :: QuadTree TreeNode -> [String]
@@ -39,15 +50,14 @@ displayChildren :: QuadTree TreeNode -> [String]
 displayChildren Leaf = []
 displayChildren (Node a ll l r rr) = previewTree ll ++ previewTree l ++ previewTree r ++ previewTree rr
 
-
--- Gets user input 
+-- Gets user input
 askAction :: IO Action
 askAction = do
+    putStr ">> "
     input <- getLine
     case parse input of
         Nothing -> do {putStrLn "Not a valid action"; askAction}
         Just a -> return a
-
 
 -- Runs the main game loop
 gameLoop :: GameInstance -> IO GameInstance
