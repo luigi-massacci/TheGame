@@ -52,6 +52,7 @@ displayChildren (Node a ll l r rr) = previewTree ll ++ previewTree l ++ previewT
 -- Gets user input
 askAction :: IO Action
 askAction = do
+  putStr ">> "
   input <- getLine
   case parse input of
     Nothing -> do putStrLn "Not a valid action"; askAction
@@ -84,5 +85,6 @@ gameLoop current_game = do
 runGame :: IO ()
 runGame = do
   putStrLn "\nWelcome to Binary Tree World."
-  gameLoop (act (Move "Root") (Game gameTree (Player 5 [])))
+  beginningGameInstance <- act (Move "Root") (Game gameTree (Player 5 []))
+  gameLoop beginningGameInstance
   return ()
