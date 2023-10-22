@@ -41,6 +41,7 @@ displayChildren (Node a ll l r rr) = previewTree ll ++ previewTree l ++ previewT
 -- Gets user input 
 askAction :: IO Action
 askAction = do
+    putStr ">> "
     input <- getLine
     case parse input of
         Nothing -> do {putStrLn "Not a valid action"; askAction}
