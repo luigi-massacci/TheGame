@@ -27,7 +27,8 @@ helheim :: TreeNode = TreeNode "Helheim" PlatformNode "You've reached Helheim, l
 
 alvheim :: TreeNode = TreeNode "Alvheim" PlatformNode "You've reached Alvehim, land of the elves"
 
-yggradasil :: Tree TreeNode =
+{-
+yggdrasil :: Tree TreeNode =
   Node
     root
     [ Node midgard [Node asgard [], Node alvheim []],
@@ -35,3 +36,4 @@ yggradasil :: Tree TreeNode =
       Node muspelheim [],
       Node helheim []
     ]
+-}

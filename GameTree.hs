@@ -13,10 +13,13 @@ import System.Random ()
 import Types
 
 -- pre-generated game tree structure
-gameTree :: Tree TreeNode = Node (root) [Node root [], Node midgard []]
+endNode :: a -> QuadTree a
+endNode x = Node x Leaf Leaf Leaf Leaf
+
+gameTree :: TreeZip TreeNode = TreeZip TOP (Node helheim Leaf Leaf Leaf (Node root (endNode muspelheim) Leaf Leaf (Node midgard (endNode swartelheim) (endNode Asgard) (endNode alvheim))))
+
 
 -- we need smth like 'entry' which runs when we enter the node
-
 runGame :: IO()
 runGame = do
     putStrLn "Welcome to Binary Tree World.\n"
