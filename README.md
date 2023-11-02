@@ -4,9 +4,7 @@
 
 - entry conditions to nodes
 - fights (+ considering inventory)
-- change spawn node
-- display tree
-- docstrings everywhere
+- implement look action (and update help message)
 
 
 
@@ -14,3 +12,7 @@
 - Functions: lowerCamelCase
 - Type / Constructors / TypeClasses : UpperCamelCase
 - variables : snake_case
+
+
+##Tests
+- What happens when typing go back at a root node?

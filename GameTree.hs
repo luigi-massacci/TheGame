@@ -26,7 +26,7 @@ gameTree :: TreeZip TreeNode =
         Leaf
         Leaf
         ( Node
-            root
+            roots
             (endNode muspelheim)
             Leaf
             Leaf
@@ -76,7 +76,7 @@ gameLoop current_game = do
     PlatformNode -> mapM_ putStrLn (displayChildren (tree (gamezip g)))
   action <- askAction
   case action of
-    Help -> putStrLn ("\n" ++ _HELP_MESSAGE ++ "\n")
+    Help -> putStrLn ("\n" ++ _HELP_MSG ++ "\n")
     ShowMap -> displayMap current_game
     _ -> putStrLn ""
   gameLoop (act action current_game)
@@ -84,7 +84,7 @@ gameLoop current_game = do
 -- we need smth like 'entry' which runs when we enter the node
 runGame :: IO ()
 runGame = do
-  putStrLn "\nWelcome to Binary Tree World."
-  beginningGameInstance <- act (Move "Root") (Game gameTree (Player 5 []))
+  putStrLn "\nWelcome to Yggradasil, the World Tree."
+  beginningGameInstance <- act (Move "Roots") (Game gameTree (Player 5 []))
   gameLoop beginningGameInstance
   return ()
