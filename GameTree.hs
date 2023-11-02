@@ -40,7 +40,7 @@ startWorld :: TreeZip TreeNode =
 -- displayChildren (Node a ll l r rr) = previewTree ll ++ previewTree l ++ previewTree r ++ previewTree rr
 
 -- Continuosly prompts the player for input until a well formed action is provided
--- Note: this function is context-blind it does not check if the action is meaningful at
+-- Note: this function is context-blind, it does not check if the action is meaningful at
 -- the current player location, just that it is in the set of all actions.
 getAction :: IO Action
 getAction = do
@@ -50,15 +50,15 @@ getAction = do
     Nothing -> do putStrLn "This is not a valid action. Perhaps you misstyped?"; getAction
     Just a -> return a
 
--- Prints the visited nodes
+-- Print the nodes the user has visited so far
 displayMap :: GameInstance -> IO ()
 displayMap _ = putStrLn "TBD"
 
 -- Runs the main game loop
 gameLoop :: GameInstance -> IO GameInstance
 gameLoop current_game = do
-  putStrLn (description (label (tree (gamezip current_game))))
-  case nodetype (label (tree (gamezip current_game))) of
+  putStrLn (description (root (tree (gamezip current_game))))
+  case nodetype (root (tree (gamezip current_game))) of
     FightNode fightT defeatT life lifeName (Obj reward) ->
       if life > 0
         then do
@@ -66,12 +66,8 @@ gameLoop current_game = do
           putStrLn ("It carries around a " ++ reward)
           putStrLn ("It seems to have " ++ show life ++ " " ++ lifeName ++ " left.")
         else putStrLn defeatT
-    PlatformNode -> putStrLn "What do you wish to do?" -- mapM_ putStrLn (displayChildren (tree (gamezip current_game))) We don't really need this
+    PlatformNode -> putStrLn "What do you wish to do?"
   action <- getAction
-  case action of
-    Help -> putStrLn ("\n" ++ _HELP_MSG ++ "\n")
-    ShowMap -> displayMap current_game
-    _ -> putStrLn "" -- TODO: checks
   new_game <- act action current_game
   gameLoop new_game
 

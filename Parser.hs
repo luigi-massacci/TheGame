@@ -102,6 +102,8 @@ addEffect (Player life att inv) s = case s of
 act :: Action -> GameInstance -> IO GameInstance
 act Help game = do
   putStrLn _HELP_MSG
+  putStr "Enter anything to go back to the game: "
+  input <- getLine
   return game
 act Look game = return game
 act (Move s) (Game t p) = case take_path t s of
