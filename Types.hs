@@ -22,14 +22,14 @@ data NodeType = FightNode {fightText :: String, defeatedText :: String, lifepoin
 data TreeNode = TreeNode
   { name :: String,
     nodetype :: NodeType,
-    msg :: String,
+    description :: String,
     previewmsg :: String, -- What will be shown from the parent node
     necessary_items :: [Object]
     -- parent :: Maybe (Tree TreeNode) -- change on move function -- zippers later
   }
   deriving (Show)
 
-data QuadTree a = Leaf | Node {label :: a, ll :: (QuadTree a), l :: (QuadTree a), r :: (QuadTree a), rr :: (QuadTree a)}
+data QuadTree a = Leaf | Node {root :: a, ll :: (QuadTree a), l :: (QuadTree a), r :: (QuadTree a), rr :: (QuadTree a)}
   deriving (Show)
 
 -- | A Node with only leaves as children

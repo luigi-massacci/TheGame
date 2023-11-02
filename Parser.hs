@@ -33,26 +33,26 @@ parse s
 -- | Checks that the location of a "go to <child_name>" instruction is valid
 matchingName :: QuadTree TreeNode -> String -> Bool
 matchingName Leaf s = False
-matchingName n s = name (label n) == s
+matchingName n s = name (root n) == s
 
 -- Take path to node of String or backwards if String is "back"
 take_path :: TreeZip TreeNode -> String -> Maybe (TreeZip TreeNode)
 take_path (TreeZip ctx Leaf) s = if s == "back" then Just (goBack (TreeZip ctx Leaf)) else Nothing -- Should never be run; Leaves are empty
-take_path (TreeZip ctx (Node label ll l r rr)) s
-  | s == "back" = Just (goBack (TreeZip ctx (Node label ll l r rr)))
-  | matchingName ll s = Just (TreeZip (LL label ctx l r rr) ll)
-  | matchingName l s = Just (TreeZip (L label ll ctx r rr) l)
-  | matchingName r s = Just (TreeZip (R label ll l ctx rr) r)
-  | matchingName rr s = Just (TreeZip (RR label ll l r ctx) rr)
+take_path (TreeZip ctx (Node root ll l r rr)) s
+  | s == "back" = Just (goBack (TreeZip ctx (Node root ll l r rr)))
+  | matchingName ll s = Just (TreeZip (LL root ctx l r rr) ll)
+  | matchingName l s = Just (TreeZip (L root ll ctx r rr) l)
+  | matchingName r s = Just (TreeZip (R root ll l ctx rr) r)
+  | matchingName rr s = Just (TreeZip (RR root ll l r ctx) rr)
   | otherwise = Nothing
 
 -- | Move focus to the parent node of the currently focused node
 goBack :: TreeZip TreeNode -> TreeZip TreeNode
 goBack (TreeZip TOP t) = TreeZip TOP t
-goBack (TreeZip (LL label ctx l r rr) ll) = TreeZip ctx (Node label ll l r rr)
-goBack (TreeZip (L label ll ctx r rr) l) = TreeZip ctx (Node label ll l r rr)
-goBack (TreeZip (R label ll l ctx rr) r) = TreeZip ctx (Node label ll l r rr)
-goBack (TreeZip (RR label ll l r ctx) rr) = TreeZip ctx (Node label ll l r rr)
+goBack (TreeZip (LL root ctx l r rr) ll) = TreeZip ctx (Node root ll l r rr)
+goBack (TreeZip (L root ll ctx r rr) l) = TreeZip ctx (Node root ll l r rr)
+goBack (TreeZip (R root ll l ctx rr) r) = TreeZip ctx (Node root ll l r rr)
+goBack (TreeZip (RR root ll l r ctx) rr) = TreeZip ctx (Node root ll l r rr)
 
 -- |  modifyPos <context> <updated_node> -> <updated_context>
 --    Update the currently focused node

@@ -17,71 +17,66 @@ startWorld :: TreeZip TreeNode =
   TreeZip
     TOP
     ( Node
-        helheim
-        Leaf
-        Leaf
-        Leaf
+        roots
+        (mkTerminalNode muspelheim)
+        (mkTerminalNode mimirs_lake)
+        (mkTerminalNode helheim)
         ( Node
-            roots
-            (mkTerminalNode muspelheim)
-            (mkTerminalNode mimirs_lake)
+            midgard
+            (mkTerminalNode swartelheim)
+            (mkTerminalNode asgard)
+            (mkTerminalNode alvheim)
             Leaf
-            ( Node
-                midgard
-                (mkTerminalNode swartelheim)
-                (mkTerminalNode asgard)
-                (mkTerminalNode alvheim)
-                Leaf
-            )
         )
     )
 
--- Show children
-previewTree :: QuadTree TreeNode -> [String]
-previewTree Leaf = []
-previewTree (Node lab _ _ _ _) = [previewmsg lab]
+-- -- Show children
+-- previewTree :: QuadTree TreeNode -> [String]
+-- previewTree Leaf = []
+-- previewTree (Node lab _ _ _ _) = [previewmsg lab]
 
-displayChildren :: QuadTree TreeNode -> [String]
-displayChildren Leaf = []
-displayChildren (Node a ll l r rr) = previewTree ll ++ previewTree l ++ previewTree r ++ previewTree rr
+-- displayChildren :: QuadTree TreeNode -> [String]
+-- displayChildren Leaf = []
+-- displayChildren (Node a ll l r rr) = previewTree ll ++ previewTree l ++ previewTree r ++ previewTree rr
 
--- Gets user input
-askAction :: IO Action
-askAction = do
+-- Continuosly prompts the player for input until a well formed action is provided
+-- Note: this function is context-blind it does not check if the action is meaningful at
+-- the current player location, just that it is in the set of all actions.
+getAction :: IO Action
+getAction = do
   putStr ">> "
   input <- getLine
   case parse input of
-    Nothing -> do putStrLn "Not a valid action"; askAction
+    Nothing -> do putStrLn "This is not a valid action. Perhaps you misstyped?"; getAction
     Just a -> return a
 
+-- Prints the visited nodes
 displayMap :: GameInstance -> IO ()
-displayMap = undefined
+displayMap _ = putStrLn "TBD"
 
 -- Runs the main game loop
 gameLoop :: GameInstance -> IO GameInstance
 gameLoop current_game = do
   putStrLn (description (label (tree (gamezip current_game))))
   case nodetype (label (tree (gamezip current_game))) of
-    FightNode fightT defeatT life lifeName reward ->
+    FightNode fightT defeatT life lifeName (Obj reward) ->
       if life > 0
         then do
           putStrLn fightT
           putStrLn ("It carries around a " ++ reward)
           putStrLn ("It seems to have " ++ show life ++ " " ++ lifeName ++ " left.")
         else putStrLn defeatT
-    PlatformNode -> mapM_ putStrLn (displayChildren (tree (gamezip current_game)))
-  action <- askAction
+    PlatformNode -> putStrLn "What do you wish to do?" -- mapM_ putStrLn (displayChildren (tree (gamezip current_game))) We don't really need this
+  action <- getAction
   case action of
     Help -> putStrLn ("\n" ++ _HELP_MSG ++ "\n")
     ShowMap -> displayMap current_game
-    _ -> putStrLn ""
+    _ -> putStrLn "" -- TODO: checks
   new_game <- act action current_game
   gameLoop new_game
 
 -- we need smth like 'entry' which runs when we enter the node
 runGame :: IO ()
 runGame = do
-  putStrLn "\nWelcome to Binary Tree World."
-  beginningGameInstance <- act (Move "Root") (Game gameTree (Player 10 1 []))
-  gameLoop beginningGameInstance
+  gameLoop (Game startWorld (Player 10 1 []))
   return ()
