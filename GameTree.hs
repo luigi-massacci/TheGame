@@ -13,11 +13,7 @@ import Parser
 import System.Random ()
 import Types
 
--- pre-generated game tree structure
-endNode :: a -> QuadTree a
-endNode x = Node x Leaf Leaf Leaf Leaf
-
-gameTree :: TreeZip TreeNode =
+startWorld :: TreeZip TreeNode =
   TreeZip
     TOP
     ( Node
@@ -27,14 +23,14 @@ gameTree :: TreeZip TreeNode =
         Leaf
         ( Node
             roots
-            (endNode muspelheim)
-            Leaf
+            (mkTerminalNode muspelheim)
+            (mkTerminalNode mimirs_lake)
             Leaf
             ( Node
                 midgard
-                (endNode swartelheim)
-                (endNode asgard)
-                (endNode alvheim)
+                (mkTerminalNode swartelheim)
+                (mkTerminalNode asgard)
+                (mkTerminalNode alvheim)
                 Leaf
             )
         )
@@ -64,16 +60,16 @@ displayMap = undefined
 -- Runs the main game loop
 gameLoop :: GameInstance -> IO GameInstance
 gameLoop current_game = do
-  putStrLn (msg (label (tree (gamezip current_game))))
+  putStrLn (description (label (tree (gamezip current_game))))
   case nodetype (label (tree (gamezip current_game))) of
-    FightNode fightT defeatT life lifeName (Obj drop) ->
+    FightNode fightT defeatT life lifeName reward ->
       if life > 0
         then do
           putStrLn fightT
-          putStrLn ("It carries around a " ++ drop)
+          putStrLn ("It carries around a " ++ reward)
           putStrLn ("It seems to have " ++ show life ++ " " ++ lifeName ++ " left.")
         else putStrLn defeatT
-    PlatformNode -> mapM_ putStrLn (displayChildren (tree (gamezip g)))
+    PlatformNode -> mapM_ putStrLn (displayChildren (tree (gamezip current_game)))
   action <- askAction
   case action of
     Help -> putStrLn ("\n" ++ _HELP_MSG ++ "\n")
@@ -85,6 +81,6 @@ gameLoop current_game = do
 runGame :: IO ()
 runGame = do
   putStrLn "\nWelcome to Yggradasil, the World Tree."
-  beginningGameInstance <- act (Move "Roots") (Game gameTree (Player 5 []))
+  beginningGameInstance <- act (Move "Roots") (Game startWorld (Player 5 []))
   gameLoop beginningGameInstance
   return ()

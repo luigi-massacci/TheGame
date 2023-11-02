@@ -4,8 +4,7 @@
 
 - entry conditions to nodes
 - fights (+ considering inventory)
-- implement look action (and update help message)
-
+- implement look action (to be used for water bottle and talk to mimir) (and update help message)
 
 
 ##Naming convention

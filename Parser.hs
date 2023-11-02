@@ -4,6 +4,7 @@
 {-# HLINT ignore "Redundant bracket" #-}
 module Parser where
 
+import Constants
 import Types
 
 -- | Map player input into valid actions
@@ -22,7 +23,6 @@ parse s
       "paper" -> Just (Attack Paper)
       "scissors" -> Just (Attack Scissors)
       _ -> Nothing
-
 
 -- | Checks that the location of a "go to <child_name>" instruction is valid
 matchingName :: QuadTree TreeNode -> String -> Bool
@@ -49,8 +49,7 @@ goBack (TreeZip (R label ll l ctx rr) r) = TreeZip ctx (Node label ll l r rr)
 goBack (TreeZip (RR label ll l r ctx) rr) = TreeZip ctx (Node label ll l r rr)
 
 -- |  modifyPos <context> <updated_node> -> <updated_context>
---    Update currently focused node 
-
+--    Update currently focused node
 modifyPos :: TreeZip TreeNode -> TreeNode -> TreeZip TreeNode
 modifyPos (TreeZip ctx Leaf) t = (TreeZip ctx (Node t Leaf Leaf Leaf Leaf))
 modifyPos (TreeZip ctx (Node lab ll l r rr)) t = (TreeZip ctx (Node t ll l r rr))
@@ -60,9 +59,9 @@ isAccessible :: GameInstance -> TreeZip TreeNode -> Bool
 isAccessible _ _ = True
 
 act :: Action -> GameInstance -> IO GameInstance
-act Help game = do 
-    putStrLn _HELP_MSG
-    return game
+act Help game = do
+  putStrLn _HELP_MSG
+  return game
 act Look game = return game
 act (Move s) (Game t p) = case take_path t s of
   Nothing -> return (Game t p)
