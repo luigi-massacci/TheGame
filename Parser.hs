@@ -65,7 +65,7 @@ authorizedMove :: Player -> TreeZip TreeNode -> Bool
 authorizedMove _ (TreeZip ctx Leaf) = False -- Can't go to leaves, should not happen anyway
 authorizedMove (Player l att inv) (TreeZip ctx (Node n a b c d)) = intersect (necessary_items n) (inv) == necessary_items n
 
--- Determines the cycle of attack winners
+-- Determines the cycle of attack_damage winners
 wins :: AttackType -> AttackType -> Maybe Bool -- wins Rock Scissors -> True
 wins a b
   | (a == b) = Nothing
@@ -80,7 +80,7 @@ damage a i = a
 -- Checks ennemy death and adds object to the player inventory
 checkDeath :: Player -> Int -> Object -> IO Player
 checkDeath p life (Obj "") =
-  if attack p < life
+  if attack_damage p < life
     then return p
     else do
       putStrLn "You defeated your ennemy !"
@@ -130,11 +130,11 @@ act (Attack t) (Game zip p) =
           putStrLn ("Your ennemy plays " ++ show ennemy_move)
           case wins t ennemy_move of
             Just True -> do
-              putStrLn ("You win ! You hurt him of " ++ show (attack p))
+              putStrLn ("You win ! You hurt him of " ++ show (attack_damage p))
               np <- checkDeath p lifepoints obj
-              return (Game (TreeZip (context zip) (damage (tree zip) (attack np))) np)
+              return (Game (TreeZip (context zip) (damage (tree zip) (attack_damage np))) np)
             Nothing -> do putStrLn "It's a draw..."; return (Game zip p)
             Just False -> do
               putStrLn ("It hurts you ! You have " ++ show ((life p) - 1) ++ " prayers to Odin left.")
-              return (Game zip (Player ((life p) - 1) (attack p) (inventory p)))
+              return (Game zip (Player ((life p) - 1) (attack_damage p) (inventory p)))
     _ -> return (Game zip p)

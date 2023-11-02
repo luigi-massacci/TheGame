@@ -29,8 +29,21 @@ _ROOTS_DESCRIPTION :: String =
   \Even further down than Helheim, at the very end of the tree (does the world tree ever end?) you seem to \n\
   \distinguish a clear LAKE, and a light shining brilliantly from its center. What could possibly be there?\n\n"
 
-_MIDGARD_DESCRIPTION :: String = ""
+_MIDGARD_DESCRIPTION :: String =
+  "You have arrived in Midgard, the land of mortal men.\
+  \Breathing comes easily here, and the sun shines upon your face. Overall, it is quite pleasant.\n\n\
+  \The most magnificent sight of all lies before your eyes: the great rainbow bridge connecting Midgard to ASGARD,\n\
+  \home of the Gods. Who knows what wanders lie beyond?\n\n\
+  \A faint but intoxicating music reaches your ears. It is so beautiful as to be almost painful,\n\
+  \and brings whispers of ALVHEIM, the fair realm of the elves.\n\n\
+  \As you gaze downward on the land you see a host of warriors preparing for battle; they are laying siege to a CITY\n\
+  \of colossal size. Its walls are so tall they seem to scrape the sky, and the rooftops of its many palaces shine\n\
+  \as if made of gold. There must be great riches to be claimed and glory to be won."
 
 _MUSPELHEIM_DESCRIPTION :: String = ""
 
-_LAKE_DESCRIPTION :: String = ""
+_LAKE_DESCRIPTION :: String =
+  "Here you are, at the furthermost corner of the Tree anybody has ever explored. Even the Allfather never\n\
+  \never went beyond this point. The water in the pool is impossibly clear, and yet startngly blue.\n\
+  \Even from here you cannot tell what the source of the light at the center is. Perhaps you should wade in\n
+  and take a closer look?"

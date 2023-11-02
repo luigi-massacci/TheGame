@@ -13,7 +13,7 @@ import System.Random
 newtype Object = Obj String
   deriving (Show, Eq)
 
-data Player = Player {life :: Int, attack :: Int, inventory :: [Object]}
+data Player = Player {life :: Int, attack_damage :: Int, inventory :: [Object]}
   deriving (Show)
 
 data NodeType = FightNode {fightText :: String, defeatedText :: String, lifepoints :: Int, lifeName :: String, object :: Object} | PlatformNode | RandomNode

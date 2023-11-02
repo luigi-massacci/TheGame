@@ -18,14 +18,20 @@ startWorld :: TreeZip TreeNode =
     TOP
     ( Node
         roots
-        (mkTerminalNode muspelheim)
+        ( Node
+            muspelheim
+            (mkTerminalNode giantFight)
+            Leaf
+            Leaf
+            Leaf
+        )
         (mkTerminalNode mimirs_lake)
         (mkTerminalNode helheim)
         ( Node
             midgard
-            (mkTerminalNode swartelheim)
             (mkTerminalNode asgard)
             (mkTerminalNode alvheim)
+            Leaf
             Leaf
         )
     )
@@ -39,9 +45,9 @@ startWorld :: TreeZip TreeNode =
 -- displayChildren Leaf = []
 -- displayChildren (Node a ll l r rr) = previewTree ll ++ previewTree l ++ previewTree r ++ previewTree rr
 
--- Continuosly prompts the player for input until a well formed action is provided
--- Note: this function is context-blind, it does not check if the action is meaningful at
--- the current player location, just that it is in the set of all actions.
+-- | Continuosly prompts the player for input until a well formed action is provided
+-- | Note: this function is context-blind, it does not check if the action is meaningful at
+-- | the current player location, just that it is in the set of all actions.
 getAction :: IO Action
 getAction = do
   putStr ">> "
@@ -50,15 +56,15 @@ getAction = do
     Nothing -> do putStrLn "This is not a valid action. Perhaps you misstyped?"; getAction
     Just a -> return a
 
--- Print the nodes the user has visited so far
+-- | Print the nodes the user has visited so far
 displayMap :: GameInstance -> IO ()
 displayMap _ = putStrLn "TBD"
 
--- Runs the main game loop
+-- | Runs the main game loop
 gameLoop :: GameInstance -> IO GameInstance
 gameLoop current_game = do
-  putStrLn (description (root (tree (gamezip current_game))))
-  case nodetype (root (tree (gamezip current_game))) of
+  putStrLn (description current_node)
+  case nodetype current_node of
     FightNode fightT defeatT life lifeName (Obj reward) ->
       if life > 0
         then do
@@ -68,10 +74,13 @@ gameLoop current_game = do
         else putStrLn defeatT
     PlatformNode -> putStrLn "What do you wish to do?"
   action <- getAction
+  -- implement check to see whether action is valid in this context
   new_game <- act action current_game
   gameLoop new_game
+  where
+    current_node = root (tree (gamezip current_game))
 
--- we need smth like 'entry' which runs when we enter the node
+-- we need smth like 'entry' which runs when we enter the node TODO: what do you mean?
 runGame :: IO ()
 runGame = do
   gameLoop (Game startWorld (Player 10 1 []))
