@@ -75,12 +75,13 @@ gameLoop current_game = do
     Help -> putStrLn ("\n" ++ _HELP_MSG ++ "\n")
     ShowMap -> displayMap current_game
     _ -> putStrLn ""
-  gameLoop (act action current_game)
+  new_game <- act action current_game
+  gameLoop new_game
 
 -- we need smth like 'entry' which runs when we enter the node
 runGame :: IO ()
 runGame = do
-  putStrLn "\nWelcome to Yggradasil, the World Tree."
-  beginningGameInstance <- act (Move "Roots") (Game startWorld (Player 5 []))
+  putStrLn "\nWelcome to Binary Tree World."
+  beginningGameInstance <- act (Move "Root") (Game gameTree (Player 10 1 []))
   gameLoop beginningGameInstance
   return ()

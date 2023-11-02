@@ -10,9 +10,10 @@ import Data.Set (fromList)
 import GHC.Core.TyCon (newTyConEtadArity)
 import System.Random
 
-type Object = String
+newtype Object = Obj String
+  deriving (Show, Eq)
 
-data Player = Player {life :: Int, inventory :: [Object]}
+data Player = Player {life :: Int, attack :: Int, inventory :: [Object]}
   deriving (Show)
 
 data NodeType = FightNode {fightText :: String, defeatedText :: String, lifepoints :: Int, lifeName :: String, object :: Object} | PlatformNode | RandomNode
@@ -21,8 +22,10 @@ data NodeType = FightNode {fightText :: String, defeatedText :: String, lifepoin
 data TreeNode = TreeNode
   { name :: String,
     nodetype :: NodeType,
-    description :: String,
-    previewmsg :: String -- What will be shown from the parent node
+    msg :: String,
+    previewmsg :: String, -- What will be shown from the parent node
+    necessary_items :: [Object]
+    -- parent :: Maybe (Tree TreeNode) -- change on move function -- zippers later
   }
   deriving (Show)
 
@@ -43,5 +46,6 @@ data GameInstance = Game {gamezip :: TreeZip TreeNode, player :: Player}
   deriving (Show)
 
 data AttackType = Rock | Paper | Scissors
+  deriving (Show, Eq)
 
 data Action = Attack AttackType | Move String | Look | Help | ShowMap
