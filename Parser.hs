@@ -1,15 +1,18 @@
-{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
-
 {-# HLINT ignore "Use camelCase" #-}
 {-# HLINT ignore "Redundant bracket" #-}
+{-# OPTIONS_GHC -Wno-overlapping-patterns #-}
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+
 module Parser where
 
 import Constants
+import Nodes (asgard)
 import Types
 
 -- | Map player input into valid actions
 -- | Note: when moving to a child note, the validity of the child name
 -- |       is not checked at this stage
+-- | If the input is illformed, returns Nothing
 parse :: String -> Maybe Action
 parse "" = Nothing
 parse s
@@ -40,7 +43,7 @@ take_path (TreeZip ctx (Node label ll l r rr)) s
   | matchingName rr s = Just (TreeZip (RR label ll l r ctx) rr)
   | otherwise = Nothing
 
--- | Shift context to parent node
+-- | Move focus to the parent node of the currently focused node
 goBack :: TreeZip TreeNode -> TreeZip TreeNode
 goBack (TreeZip TOP t) = TreeZip TOP t
 goBack (TreeZip (LL label ctx l r rr) ll) = TreeZip ctx (Node label ll l r rr)
@@ -49,14 +52,17 @@ goBack (TreeZip (R label ll l ctx rr) r) = TreeZip ctx (Node label ll l r rr)
 goBack (TreeZip (RR label ll l r ctx) rr) = TreeZip ctx (Node label ll l r rr)
 
 -- |  modifyPos <context> <updated_node> -> <updated_context>
---    Update currently focused node
+--    Update the currently focused node
 modifyPos :: TreeZip TreeNode -> TreeNode -> TreeZip TreeNode
 modifyPos (TreeZip ctx Leaf) t = (TreeZip ctx (Node t Leaf Leaf Leaf Leaf))
 modifyPos (TreeZip ctx (Node lab ll l r rr)) t = (TreeZip ctx (Node t ll l r rr))
 
 -- | Checks whether the player meets the requirements to access a given node
 isAccessible :: GameInstance -> TreeZip TreeNode -> Bool
-isAccessible _ _ = True
+isAccessible current_game target_node = case tree target_node of
+  muspelheim -> "flask" `elem` inventory (player current_game)
+  asgard -> length (inventory (player current_game)) == 3 -- Player has collected all the items
+  _ -> True
 
 act :: Action -> GameInstance -> IO GameInstance
 act Help game = do
