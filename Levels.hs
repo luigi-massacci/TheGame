@@ -27,14 +27,14 @@ mimirs_lake :: Level = Level "LAKE" Platform _LAKE_DESCRIPTION "" []
 
 asgard :: Level = Level "ASGARD" Platform "You've reached Asgard, home of the Gods!" _ASGARD_LOCK ["sword", "cape", "armor"]
 
-swartelheim :: Level = Level "SWARTELHEIM" Platform "You've reached Swartelheim, land of the dwarves!" "" []
+swartelheim :: Level = Level "SWARTELHEIM" Platform _SWARTELEIM_DESCRIPTION "" []
 
-fafnir :: Level = Level "FAFNIR" (Fight _FAFNIR_VICTORY 3 "armor") _FAFNIR_FIGHT "" []
+fafnir :: Level = Level "CAVE" (Fight _CAVE_VICTORY_TEXT 3 "armor") _CAVE_FIGHT_TEXT "" []
 
-alvheim :: Level = Level "ALFHEIM" Platform "You've reached Alvehim, land of the elves" "" []
+alvheim :: Level = Level "ALVHEIM" Platform _ALVEHIM_DESCRIPTION "" []
 
 feanor :: Level = Level "FEANOR" (Fight _FEANOR_VICTORY 2 "cape") _FEANOR_FIGHT "" []
 
-vanheim :: Level = Level "VANHEIM" Platform "You've reached Vanheim, land of the Vanir" _VANHEIM_LOCK ["cape"]
+vanheim :: Level = Level "VANHEIM" Platform _VANHEIM_DESCRIPTION _VANHEIM_LOCK ["cape"]
 
 surtr :: Level = Level "SURTR" (Fight _SURTR_VICTORY 5 "sword") _SURTR_FIGHT "" []

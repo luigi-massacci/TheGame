@@ -1,7 +1,7 @@
 module LevelDescriptions where
 
 _ROOTS_DESCRIPTION :: String =
-  "\nYou stand among the roots of Yggradsil, the world tree.\
+  "\nYou stand among the roots of Yggradsil, the world tree.\n\
   \Its bark is tougher than steel, and older than the universe.\n\
   \On and on it stretches upwards, farther than you could possibly ever see.\n\
   \High above you lie the great planes and all of their inhabitants. You feel very tiny indeed.\n\n\
@@ -17,7 +17,7 @@ _ROOTS_DESCRIPTION :: String =
   \distinguish a clear LAKE, and a light shining brilliantly from its center. What could possibly be there?\n\n"
 
 _MIDGARD_DESCRIPTION :: String =
-  "\nYou have arrived in Midgard, the land of mortal men.\
+  "\nYou have arrived in Midgard, the land of mortal men.\n\
   \Breathing comes easily here, and the sun shines upon your face. Overall, it is quite pleasant.\n\n\
   \The most magnificent sight of all lies before your eyes: the great rainbow bridge connecting Midgard to ASGARD,\n\
   \home of the Gods. Who knows what wanders lie beyond?\n\n\
@@ -31,7 +31,8 @@ _MUSPELHEIM_DESCRIPTION :: String =
   "\nYou've reached the borders of Muspelheim, land of the fire giants. The ground is covered by a thick layer of ash,\n\
   \and scarred by rivers of lava. You struggle to breathe, and the sky is blackened by the smoke from the many raging fires.\n\
   \Here and there you see giants clothed in flames going about their way.\n\
-  \At the top of a mountain, sitting on a trone of black stone is SURTR, king of the giants."
+  \At the top of a mountain, sitting on a trone of black stone is SURTR, king of the giants.\n\
+  \\n\nAnother branch extends downwards, away from the inferno. That must be SWARTELHEIM, of which you've heard legends."
 
 _SURTR_FIGHT :: String =
   "\nYou stand before the king of the giants, the one who will eveventually burn\n\
@@ -42,13 +43,37 @@ _SURTR_VICTORY :: String =
   "\nThe king of the giants bows before you, recognizing a hero of true valor. Not even the god of thunder\n\
   \can claim to have ever defeated the child of fire. He will remeber the day until ythe end of times."
 
-_FAFNIR_VICTORY :: String = ""
+_SWARTELEIM_DESCRIPTION :: String =
+  "\nYou have reached Swartelheim, land of the dwarves. This strange creatures\n\
+  \are not much larger than a child, and yet posses the strength to mine the rocks tirelessly in search of precious\n\
+  \metals with which to fashion tools of unparalleled quality. You see a CAVE in the distance.\n\
+  \Perhaps you could bargain with a dwarf for his treasure?"
 
-_FAFNIR_FIGHT :: String = ""
+_CAVE_VICTORY_TEXT :: String =
+  "\nThe treasure of the dragon piles up to the ceiling, but you know better than to steal a dwarf's gold,\n\
+  \lest you be turned into a monster too by their powerful curses."
 
-_FEANOR_VICTORY :: String = ""
+_CAVE_FIGHT_TEXT :: String =
+  "\nA dwarf lies crying about the entrance. The dragon Fafnir has stolen his hoard.\n\
+  \Were you to defeat the fearsome beast, perhaps you might receive some great work of dwarven craft as a gift."
 
-_FEANOR_FIGHT :: String = ""
+_ALVEHIM_DESCRIPTION :: String =
+  "\nYou've reached Vanheim, land of the elves.\n\
+  \Everything is bliss, and the elves discuss among great works of magic and poetry.\n\
+  \A whole crowd surrounds FEANOR, the cleverest among the fair creatures."
+
+_FEANOR_VICTORY :: String =
+  "Never would have Feanor believed that one day he would be surpassed by a mortal.\n\
+  \He bows before your intellect."
+
+_FEANOR_FIGHT :: String =
+  "The elf is deep into work: from the feathers of a falcon he's fashioning a cape\n\
+  \that can give its wearer the gift of flight. He can't be bothered to speak to those\n\
+  \who haven't proven themselves to be worthy of his time."
+
+_VANHEIM_DESCRIPTION :: String =
+  "\nYou have reached Vanheim, home of the Vanir, brothers and foes of the Gods,\n\
+  \masters of magic. Where did they come from?"
 
 _VANHEIM_LOCK :: String = "\nThat branch is impossibly high. If Only you could fly..."
 
