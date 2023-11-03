@@ -31,4 +31,4 @@ swartelheim :: Level = Level "SWARTELHEIM" Platform "You've reached Swartelheim,
 
 alvheim :: Level = Level "ALFHEIM" Platform "You've reached Alvehim, land of the elves" []
 
-giantFight :: Level = Level "SURTR" (Fight 5 "TBD4") "TBD5" []
+giantFight :: Level = Level "SURTR" (Fight _SURTR_VICTORY 1 "sword") _SURTR_FIGHT []

@@ -108,55 +108,49 @@ unlocked _ (TreeZip ctx Leaf) = False -- Can't go to leaves, should not happen a
 unlocked (Player _ _ inventory) (TreeZip _ (Node level _ _ _ _)) =
   intersect (necessaryItems level) inventory == necessaryItems level
 
+respawnPlayer :: TreeZip Level -> TreeZip Level
+respawnPlayer t = t
+
 --------------------------------------------------------------------------------
 
 -- | FIGHT FUNCTIONS
 
 --------------------------------------------------------------------------------
 
--- | Determines the cycle of attackDamage winners
-playerVictory :: AttackType -> AttackType -> Maybe Bool -- wins Rock Scissors -> True
-playerVictory p1_move p2_move
-  | p1_move == p2_move = Nothing
-  | (p1_move == Rock && p2_move == Scissors)
-      || (p1_move == Scissors && p2_move == Paper)
-      || (p1_move == Paper && p2_move == Rock) =
+-- | Determines who won the round of rock-paper-scissors
+-- | player wins -> True
+-- | enemy wins -> False
+-- | draw -> Nothing
+playerVictory :: AttackType -> AttackType -> Maybe Bool
+playerVictory player_move enemy_move
+  | player_move == enemy_move = Nothing
+  | (player_move == Rock && enemy_move == Scissors)
+      || (player_move == Scissors && enemy_move == Paper)
+      || (player_move == Paper && enemy_move == Rock) =
       Just True
   | otherwise = Just False
 
 -- | Modify enemy lifePoints
-damage :: QuadTree Level -> Int -> QuadTree Level
-damage (Node (Level name (Fight lifePoints ob) msg i) j k l m) d =
-  Node (Level name (Fight (lifePoints - d) ob) msg i) j k l m
-damage a i = a
-
--- | Checks enemy death and adds object to the player inventory
-checkDeath :: Player -> Int -> Object -> IO Player
-checkDeath p lifePoints "" =
-  if attackDamage p < lifePoints
-    then return p
-    else do
-      putStrLn "You defeated your enemy !"
-      return p
-checkDeath (Player l att inv) lifePoints s =
-  if att < lifePoints
-    then return (Player l att inv)
-    else do
-      putStrLn "You defeated your enemy !"
-      putStrLn ("You received the " ++ s ++ ", well done !")
-      addEffect (Player l att (s : inv)) s
+updateEnemy :: QuadTree Level -> Int -> QuadTree Level
+updateEnemy (Node (Level n (Fight vt life_points o) d i) ll l r rr) damage =
+  Node (Level n (Fight vt (life_points - damage) o) d i) ll l r rr
+updateEnemy level _ = level
 
 -- | Adds object effect to the player
-addEffect :: Player -> String -> IO Player
-addEffect (Player lifePoints att inv) s = case s of
-  "stone pickaxe" -> do putStrLn "It gives you more strength !"; return (Player lifePoints (att + 1) inv)
-  _ -> return (Player lifePoints att inv)
-
-lifePointsBuffs :: Player -> Int
-lifePointsBuffs player = if "armor" `elem` inventory player then 5 else 0
-
-attackBuffs :: Player -> Int
-attackBuffs player = if "sword" `elem` inventory player then 2 else 0
+updatePlayer :: Player -> Object -> IO Player
+updatePlayer (Player life_points attack_damage inventory) item =
+  case item of
+    "sword" -> do
+      putStrLn "Your blows now deal 2 extra damage."
+      return (Player life_points (attack_damage + 2) new_inventory)
+    "armor" -> do
+      putStrLn "You now have 5 extra life points."
+      return (Player (life_points + 5) attack_damage new_inventory)
+    _ -> do
+      putStrLn (item ++ " has been added to your invetory.")
+      return (Player life_points attack_damage new_inventory)
+  where
+    new_inventory = item : inventory
 
 --------------------------------------------------------------------------------
 
@@ -173,7 +167,7 @@ evolve (Move destination) (Game current_world player) =
   case transition current_world destination of
     Nothing ->
       displayMessage
-        "It would seem the place you want to go to does not exist,\n\
+        "It would seem the place you want to go to does not exist, \
         \or is inaccessible from your current location."
         (Game current_world player)
     Just new_world ->
@@ -184,11 +178,11 @@ evolve (Move destination) (Game current_world player) =
           return (Game current_world player)
 evolve (Attack player_move) (Game current_world player) =
   case tree current_world of
-    Node (Level _ (Fight enemy_life_points item) _ _) _ _ _ _ ->
+    Node (Level n (Fight victory_text enemy_life_points item) d ni) ll l r rr ->
       if enemy_life_points <= 0
         then
           displayMessage
-            "There is no one to fight here."
+            "There is no one to fight here anymore."
             (Game current_world player)
         else do
           move_int <- randomRIO (1, 3) :: IO Int
@@ -202,21 +196,63 @@ evolve (Attack player_move) (Game current_world player) =
           case playerVictory player_move enemy_move of
             Just True -> do
               putStrLn
-                ( "You won this round! Your did "
-                    ++ show (attackDamage player + attackBuffs player)
+                ( "You won this round! You did "
+                    ++ show (attackDamage player)
                     ++ " points of damage."
                 )
-              np <- checkDeath player enemy_life_points item
-              return (Game (TreeZip (context current_world) (damage (tree current_world) (attackDamage np))) np)
+              if remaining_enemy_life <= 0
+                then do
+                  putStrLn "You have vanquished your enemy."
+                  putStrLn ("As he flees, he leaves his " ++ item ++ " behind.")
+                  putStrLn "You take it for yourself."
+                  new_player <- updatePlayer player item
+                  return
+                    ( Game
+                        ( TreeZip
+                            (context current_world)
+                            (Node (Level n (Fight victory_text remaining_enemy_life item) victory_text ni) l ll r rr)
+                        )
+                        new_player
+                    )
+                else
+                  return
+                    ( Game
+                        ( TreeZip
+                            (context current_world)
+                            (updateEnemy (tree current_world) (attackDamage player))
+                        )
+                        player
+                    )
+              where
+                remaining_enemy_life = enemy_life_points - attackDamage player
             Just False -> do
               putStrLn
                 ( "You were no match for your opponent. You have "
                     ++ show (lifePoints player - 1)
                     ++ " life points left."
                 )
-              return (Game current_world (Player (lifePoints player - 1) (attackDamage player) (inventory player)))
+              if (lifePoints player - 1) == 0
+                then do
+                  putStrLn "Oh No! You died!"
+                  return
+                    ( Game
+                        (respawnPlayer current_world)
+                        (Player _DEFAULT_LIFE_POINTS _DEFAULT_DAMAGE [])
+                    )
+                else
+                  return
+                    ( Game
+                        current_world
+                        ( Player
+                            (lifePoints player - 1)
+                            (attackDamage player)
+                            (inventory player)
+                        )
+                    )
             Nothing -> do putStrLn "Neither managed to best the other"; return (Game current_world player)
     _ ->
       displayMessage
         "This is no place for violence."
         (Game current_world player)
+  where
+    current_node = root

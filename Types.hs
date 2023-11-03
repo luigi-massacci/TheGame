@@ -19,7 +19,14 @@ data AttackType = Rock | Paper | Scissors
 data Action = Attack AttackType | Move String | Look | Help | ShowMap
 
 -- | Story/World related data types
-data LevelType = Fight {enemyLifePoints :: Int, item :: Object} | Platform | Random
+data LevelType
+  = Fight
+      { victoryText :: String,
+        enemyLifePoints :: Int,
+        item :: Object
+      }
+  | Platform
+  | Random
   deriving (Show)
 
 data Level = Level
