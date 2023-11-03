@@ -40,7 +40,12 @@ _MIDGARD_DESCRIPTION :: String =
   \of colossal size. Its walls are so tall they seem to scrape the sky, and the rooftops of its many palaces shine\n\
   \as if made of gold. There must be great riches to be claimed and glory to be won."
 
-_MUSPELHEIM_DESCRIPTION :: String = ""
+_MUSPELHEIM_DESCRIPTION :: String =
+  "You've reached the borders of Muspelheim, land of the fire giants. The ground is covered by a thick layer of ash,\n\
+  \and scarred by rivers of lava. You struggle to breathe, and the sky is blackened by the smoke from the many raging fires.\n\
+  \Here and there you see giants clothed in flames going about their way.\n\
+  \At the top of a mountain, sitting on a trone of black stone is SURTR, king of the giants, a shining sword laying on his lap.\n\
+  \He looks at you and sneers."
 
 _LAKE_DESCRIPTION :: String =
   "Here you are, at the furthermost corner of the Tree anybody has ever explored. Even the Allfather never\n\

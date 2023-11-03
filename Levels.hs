@@ -1,6 +1,6 @@
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 
-module Nodes where
+module Levels where
 
 import Constants
 import Data.List
@@ -31,4 +31,4 @@ swartelheim :: Level = Level "SWARTELHEIM" Platform "You've reached Swartelheim,
 
 alvheim :: Level = Level "ALFHEIM" Platform "You've reached Alvehim, land of the elves" []
 
-giantFight :: Level = Level "Giant House" (Fight "TBD1" "TBD2" 5 "TBD3" ("TBD4")) "TBD5" []
+giantFight :: Level = Level "SURTR" (Fight "TBD1" "TBD2" 5 "TBD3" "TBD4") "TBD5" []
