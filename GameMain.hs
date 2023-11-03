@@ -1,6 +1,6 @@
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 
-module Game where
+module GameMain where
 
 import Data.List
 import Data.Set (fromList)
@@ -24,7 +24,7 @@ gameLoop current_game = do
     Fight vt enemy_life_points _ ->
       if enemy_life_points > 0
         then do
-          putStrLn "You have been challanged to a game of rock-paper-scissors."
+          putStrLn "\nYou have been challenged to a game of rock-paper-scissors."
           putStrLn
             ( "Your enemy has "
                 ++ show enemy_life_points

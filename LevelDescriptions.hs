@@ -22,10 +22,10 @@ _MIDGARD_DESCRIPTION :: String =
   \The most magnificent sight of all lies before your eyes: the great rainbow bridge connecting Midgard to ASGARD,\n\
   \home of the Gods. Who knows what wanders lie beyond?\n\n\
   \A faint but intoxicating music reaches your ears. It is so beautiful as to be almost painful,\n\
-  \and brings whispers of ALVHEIM, the fair realm of the elves.\n\n\
-  \As you gaze downward on the land you see a host of warriors preparing for battle; they are laying siege to a CITY\n\
-  \of colossal size. Its walls are so tall they seem to scrape the sky, and the rooftops of its many palaces shine\n\
-  \as if made of gold. There must be great riches to be claimed and glory to be won."
+  \and brings whispers of ALVHEIM, the fair realm of the elves." -- \n\n\
+  -- \As you gaze downward on the land you see a host of warriors preparing for battle; they are laying siege to a CITY\n\
+  -- \of colossal size. Its walls are so tall they seem to scrape the sky, and the rooftops of its many palaces shine\n\
+  -- \as if made of gold. There must be great riches to be claimed and glory to be won."
 
 _MUSPELHEIM_DESCRIPTION :: String =
   "\nYou've reached the borders of Muspelheim, land of the fire giants. The ground is covered by a thick layer of ash,\n\
@@ -44,8 +44,8 @@ _SURTR_VICTORY :: String =
   \can claim to have ever defeated the child of fire. He will remeber the day until ythe end of times."
 
 _SWARTELEIM_DESCRIPTION :: String =
-  "\nYou have reached Swartelheim, land of the dwarves. This strange creatures\n\
-  \are not much larger than a child, and yet posses the strength to mine the rocks tirelessly in search of precious\n\
+  "\nYou have reached Swartelheim, land of the dwarves. This strange creatures are not much larger than a child,\n\
+  \and yet posses the strength to mine the rocks tirelessly in search of precious\n\
   \metals with which to fashion tools of unparalleled quality. You see a CAVE in the distance.\n\
   \Perhaps you could bargain with a dwarf for his treasure?"
 
@@ -55,19 +55,21 @@ _CAVE_VICTORY_TEXT :: String =
 
 _CAVE_FIGHT_TEXT :: String =
   "\nA dwarf lies crying about the entrance. The dragon Fafnir has stolen his hoard.\n\
-  \Were you to defeat the fearsome beast, perhaps you might receive some great work of dwarven craft as a gift."
+  \Were you to defeat the fearsome beast, perhaps you might receive some great work of dwarven craft as a gift.\n\
+  \The dragon gives you no time to think, and rushes at you with fire and fang."
 
 _ALVEHIM_DESCRIPTION :: String =
-  "\nYou've reached Vanheim, land of the elves.\n\
-  \Everything is bliss, and the elves discuss among great works of magic and poetry.\n\
-  \A whole crowd surrounds FEANOR, the cleverest among the fair creatures."
+  "\nYou've reached Alvheim, land of the elves.\n\
+  \Everything is bliss, and the elves discuss among themsleves great works of magic and poetry.\n\
+  \A whole crowd surrounds FEANOR, the cleverest among the fair creatures.\n\n\
+  \Further up the tree, you catch a glimpse of VANHEIM, where all magic comes from."
 
 _FEANOR_VICTORY :: String =
-  "Never would have Feanor believed that one day he would be surpassed by a mortal.\n\
+  "\nNever would have Feanor believed that one day he would be surpassed by a mortal.\n\
   \He bows before your intellect."
 
 _FEANOR_FIGHT :: String =
-  "The elf is deep into work: from the feathers of a falcon he's fashioning a cape\n\
+  "\nThe elf is deep into work: from the feathers of a falcon he's fashioning a cape\n\
   \that can give its wearer the gift of flight. He can't be bothered to speak to those\n\
   \who haven't proven themselves to be worthy of his time."
 
@@ -75,11 +77,11 @@ _VANHEIM_DESCRIPTION :: String =
   "\nYou have reached Vanheim, home of the Vanir, brothers and foes of the Gods,\n\
   \masters of magic. Where did they come from?"
 
-_VANHEIM_LOCK :: String = "\nThat branch is impossibly high. If Only you could fly..."
+_VANHEIM_LOCK :: String = "\nThat branch is impossibly high. If only you could fly..."
 
 _ASGARD_LOCK :: String =
   "\nHeimdall, Warden of the Gods, bids you to halt.\n\
-  \Only a here hailed three times champion may alk the Bifrost. Bring him proof of your valor."
+  \Only a hero hailed three times champion may walk the Bifrost. Bring him proof of your valor."
 
 _LAKE_DESCRIPTION :: String =
   "\nHere you are, at the furthermost corner of the Tree anybody has ever explored. Even the Allfather never\n\

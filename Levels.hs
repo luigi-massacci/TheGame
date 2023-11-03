@@ -25,7 +25,7 @@ muspelheim :: Level =
 
 mimirs_lake :: Level = Level "LAKE" Platform _LAKE_DESCRIPTION "" []
 
-asgard :: Level = Level "ASGARD" Platform "You've reached Asgard, home of the Gods!" _ASGARD_LOCK ["sword", "cape", "armor"]
+asgard :: Level = Level "ASGARD" Platform "\nYou've reached Asgard, home of the Gods!" _ASGARD_LOCK ["sword", "cape", "armor"]
 
 swartelheim :: Level = Level "SWARTELHEIM" Platform _SWARTELEIM_DESCRIPTION "" []
 
