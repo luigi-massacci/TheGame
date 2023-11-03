@@ -1,7 +1,5 @@
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 
-{-# HLINT ignore "Use newtype instead of data" #-}
-
 module Game where
 
 import Constants
@@ -13,7 +11,7 @@ import Parser
 import System.Random ()
 import Types
 
-startWorld :: TreeZip TreeNode =
+startWorld :: TreeZip Level =
   TreeZip
     TOP
     ( Node
@@ -35,15 +33,6 @@ startWorld :: TreeZip TreeNode =
             Leaf
         )
     )
-
--- -- Show children
--- previewTree :: QuadTree TreeNode -> [String]
--- previewTree Leaf = []
--- previewTree (Node lab _ _ _ _) = [previewmsg lab]
-
--- displayChildren :: QuadTree TreeNode -> [String]
--- displayChildren Leaf = []
--- displayChildren (Node a ll l r rr) = previewTree ll ++ previewTree l ++ previewTree r ++ previewTree rr
 
 -- | Continuosly prompts the player for input until a well formed action is provided
 -- | Note: this function is context-blind, it does not check if the action is meaningful at
@@ -74,7 +63,6 @@ gameLoop current_game = do
         else putStrLn defeatT
     PlatformNode -> putStrLn "What do you wish to do?"
   action <- getAction
-  -- implement check to see whether action is valid in this context
   new_game <- act action current_game
   gameLoop new_game
   where
@@ -83,5 +71,5 @@ gameLoop current_game = do
 -- we need smth like 'entry' which runs when we enter the node TODO: what do you mean?
 runGame :: IO ()
 runGame = do
-  gameLoop (Game startWorld (Player 10 1 []))
+  gameLoop (Game startWorld (Player 5 1 []))
   return ()

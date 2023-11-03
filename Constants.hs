@@ -45,5 +45,5 @@ _MUSPELHEIM_DESCRIPTION :: String = ""
 _LAKE_DESCRIPTION :: String =
   "Here you are, at the furthermost corner of the Tree anybody has ever explored. Even the Allfather never\n\
   \never went beyond this point. The water in the pool is impossibly clear, and yet startngly blue.\n\
-  \Even from here you cannot tell what the source of the light at the center is. Perhaps you should wade in\n
-  and take a closer look?"
+  \Even from here you cannot tell what the source of the light at the center is. Perhaps you should wade in\n\
+  \and take a closer look?"

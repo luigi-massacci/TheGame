@@ -1,7 +1,5 @@
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 
-{-# HLINT ignore "Use newtype instead of data" #-}
-
 module Nodes where
 
 import Constants
@@ -13,24 +11,24 @@ import Types
 
 -- Initial nodes
 
-helheim :: TreeNode =
-  TreeNode "HELHEIM" PlatformNode "You've reached Helheim, land of the dead!" "This should definitely never be printed" []
+helheim :: Level =
+  Level "HELHEIM" Platform "You've reached Helheim, land of the dead!" []
 
-roots :: TreeNode =
-  TreeNode "ROOTS" PlatformNode _ROOTS_DESCRIPTION "When is this printed? From roots preview " []
+roots :: Level =
+  Level "ROOTS" Platform _ROOTS_DESCRIPTION []
 
-midgard :: TreeNode =
-  TreeNode "MIDGARD" PlatformNode _MIDGARD_DESCRIPTION "When is this printed? From Midgard preview " []
+midgard :: Level =
+  Level "MIDGARD" Platform _MIDGARD_DESCRIPTION []
 
-muspelheim :: TreeNode =
-  TreeNode "MUSPELHEIM" PlatformNode _MUSPELHEIM_DESCRIPTION "When is this printed? From muspelheim preview " []
+muspelheim :: Level =
+  Level "MUSPELHEIM" Platform _MUSPELHEIM_DESCRIPTION []
 
-mimirs_lake :: TreeNode = TreeNode "LAKE" PlatformNode _LAKE_DESCRIPTION "When is this printed? In lake preview" []
+mimirs_lake :: Level = Level "LAKE" Platform _LAKE_DESCRIPTION []
 
-asgard :: TreeNode = TreeNode "ASGARD" PlatformNode "You've reached Asgard, home of the Gods!" "The bifrost lays beneath your eyes! This is your way to Asgard!" []
+asgard :: Level = Level "ASGARD" Platform "You've reached Asgard, home of the Gods!" []
 
-swartelheim :: TreeNode = TreeNode "SWARTELHEIM" PlatformNode "You've reached Swartelheim, land of the dwarves!" "You see some mountains in the distance. Could this be Swartelheim?" []
+swartelheim :: Level = Level "SWARTELHEIM" Platform "You've reached Swartelheim, land of the dwarves!" []
 
-alvheim :: TreeNode = TreeNode "ALFHEIM" PlatformNode "You've reached Alvehim, land of the elves" "This forest looks deep and dangerous. This is not what you would expect Alfheim to look like" []
+alvheim :: Level = Level "ALFHEIM" Platform "You've reached Alvehim, land of the elves" []
 
-giantFight :: TreeNode = TreeNode "Giant House" (FightNode "Oh god, there's a fire giant in front of you. It is big." "The fire giant's dead body in front of you. It actually looks like the mountains surrounding. This creeps you out." 5 "hearts" (Obj "stone pickaxe")) "There's a giant stone house in front of you" "You can distinguish some kind of Giant House in the distance" []
+giantFight :: Level = Level "Giant House" (Fight "TBD1" "TBD2" 5 "TBD3" ("TBD4")) "TBD5" []

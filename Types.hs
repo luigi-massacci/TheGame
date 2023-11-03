@@ -1,8 +1,5 @@
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 
-{-# HLINT ignore "Use newtype instead of data" #-}
-{-# HLINT ignore "Redundant bracket" #-}
-
 module Types where
 
 import Data.List
@@ -10,26 +7,23 @@ import Data.Set (fromList)
 import GHC.Core.TyCon (newTyConEtadArity)
 import System.Random
 
-newtype Object = Obj String
-  deriving (Show, Eq)
+type Object = String
 
 data Player = Player {life :: Int, attack_damage :: Int, inventory :: [Object]}
   deriving (Show)
 
-data NodeType = FightNode {fightText :: String, defeatedText :: String, lifepoints :: Int, lifeName :: String, object :: Object} | PlatformNode | RandomNode
+data LevelType = Fight {fightText :: String, defeatedText :: String, lifepoints :: Int, lifeName :: String, object :: Object} | Platform | Random
   deriving (Show)
 
-data TreeNode = TreeNode
+data Level = Level
   { name :: String,
-    nodetype :: NodeType,
+    leveltype :: LevelType,
     description :: String,
-    previewmsg :: String, -- What will be shown from the parent node
     necessary_items :: [Object]
-    -- parent :: Maybe (Tree TreeNode) -- change on move function -- zippers later
   }
   deriving (Show)
 
-data QuadTree a = Leaf | Node {root :: a, ll :: (QuadTree a), l :: (QuadTree a), r :: (QuadTree a), rr :: (QuadTree a)}
+data QuadTree a = Leaf | Node {root :: a, ll :: QuadTree a, l :: QuadTree a, r :: QuadTree a, rr :: QuadTree a}
   deriving (Show)
 
 -- | A Node with only leaves as children
@@ -42,7 +36,7 @@ data Context a = TOP | LL a (Context a) (QuadTree a) (QuadTree a) (QuadTree a) |
 data TreeZip a = TreeZip {context :: Context a, tree :: QuadTree a}
   deriving (Show)
 
-data GameInstance = Game {gamezip :: TreeZip TreeNode, player :: Player}
+data GameInstance = Game {gamezip :: TreeZip Level, player :: Player}
   deriving (Show)
 
 data AttackType = Rock | Paper | Scissors
