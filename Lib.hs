@@ -130,12 +130,6 @@ playerVictory player_move enemy_move
       Just True
   | otherwise = Just False
 
--- | Modify enemy lifePoints
-updateEnemy :: QuadTree Level -> Int -> QuadTree Level
-updateEnemy (Node (Level n (Fight vt life_points o) d i) ll l r rr) damage =
-  Node (Level n (Fight vt (life_points - damage) o) d i) ll l r rr
-updateEnemy level _ = level
-
 -- | Adds object effect to the player
 updatePlayer :: Player -> Object -> IO Player
 updatePlayer (Player life_points attack_damage inventory) item =
@@ -151,6 +145,22 @@ updatePlayer (Player life_points attack_damage inventory) item =
       return (Player life_points attack_damage new_inventory)
   where
     new_inventory = item : inventory
+
+updateWorld :: QuadTree Level -> Player -> IO (QuadTree Level, Player)
+updateWorld (Node (Level n (Fight victory_text enemy_life_points item) description i) ll l r rr) player =
+  if remaining_enemy_life <= 0
+    then do
+      putStrLn "You have vanquished your enemy."
+      putStrLn ("As he flees, he leaves his " ++ item ++ " behind.")
+      putStrLn "You take it for yourself."
+      new_player <- updatePlayer player item
+      return (new_world, new_player)
+    else return (old_world, player)
+  where
+    remaining_enemy_life = enemy_life_points - attackDamage player
+    new_world = Node (Level n (Fight victory_text remaining_enemy_life item) victory_text i) l ll r rr
+    old_world = Node (Level n (Fight victory_text remaining_enemy_life item) description i) l ll r rr
+updateWorld level player = return (level, player)
 
 --------------------------------------------------------------------------------
 
@@ -177,8 +187,8 @@ evolve (Move destination) (Game current_world player) =
           putStrLn "You are not worthy enough to do this right now...\n"
           return (Game current_world player)
 evolve (Attack player_move) (Game current_world player) =
-  case tree current_world of
-    Node (Level n (Fight victory_text enemy_life_points item) d ni) ll l r rr ->
+  case leveltype current_node of
+    Fight victory_text enemy_life_points item ->
       if enemy_life_points <= 0
         then
           displayMessage
@@ -200,31 +210,8 @@ evolve (Attack player_move) (Game current_world player) =
                     ++ show (attackDamage player)
                     ++ " points of damage."
                 )
-              if remaining_enemy_life <= 0
-                then do
-                  putStrLn "You have vanquished your enemy."
-                  putStrLn ("As he flees, he leaves his " ++ item ++ " behind.")
-                  putStrLn "You take it for yourself."
-                  new_player <- updatePlayer player item
-                  return
-                    ( Game
-                        ( TreeZip
-                            (context current_world)
-                            (Node (Level n (Fight victory_text remaining_enemy_life item) victory_text ni) l ll r rr)
-                        )
-                        new_player
-                    )
-                else
-                  return
-                    ( Game
-                        ( TreeZip
-                            (context current_world)
-                            (updateEnemy (tree current_world) (attackDamage player))
-                        )
-                        player
-                    )
-              where
-                remaining_enemy_life = enemy_life_points - attackDamage player
+              (new_level, new_player) <- updateWorld (tree current_world) player
+              return (Game (TreeZip (context current_world) new_level) new_player)
             Just False -> do
               putStrLn
                 ( "You were no match for your opponent. You have "
@@ -255,4 +242,4 @@ evolve (Attack player_move) (Game current_world player) =
         "This is no place for violence."
         (Game current_world player)
   where
-    current_node = root
+    current_node = root (tree current_world)

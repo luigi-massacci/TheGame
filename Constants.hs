@@ -50,7 +50,7 @@ _MUSPELHEIM_DESCRIPTION :: String =
   \Here and there you see giants clothed in flames going about their way.\n\
   \At the top of a mountain, sitting on a trone of black stone is SURTR, king of the giants."
 
-_SURTR_FIGHT :: String = "He has a shining sword laying on his lap. He looks at you and sneers."
+_SURTR_FIGHT :: String = "\n\nHe has a shining sword laying on his lap. He looks at you and sneers."
 
 _SURTR_VICTORY :: String = "TBD victory"
 
