@@ -7,6 +7,7 @@ import Data.List
 import ErrorMessages
 import GHC.Utils.Panic.Plain (PlainGhcException)
 import StartPlayer
+import StartWorld (_START_WORLD)
 import System.Random
 import Types
 
@@ -231,8 +232,8 @@ evolve (Attack player_move) (Game current_world player) =
                 )
               if (lifePoints player - 1) == 0
                 then do
-                  putStrLn "\nOh No! You died!"
-                  return (Game (respawnPlayer current_world) _START_PLAYER)
+                  putStrLn "\nOh No! You died! Perhaps you will have better luck in your next life."
+                  return (Game _START_WORLD _START_PLAYER)
                 else
                   return
                     ( Game
