@@ -10,7 +10,7 @@ import System.Random
 type Object = String
 
 -- | Player related data types
-data Player = Player {life :: Int, attack_damage :: Int, inventory :: [Object]}
+data Player = Player {lifePoints :: Int, attackDamage :: Int, inventory :: [Object]}
   deriving (Show)
 
 data AttackType = Rock | Paper | Scissors
@@ -19,14 +19,14 @@ data AttackType = Rock | Paper | Scissors
 data Action = Attack AttackType | Move String | Look | Help | ShowMap
 
 -- | Story/World related data types
-data LevelType = Fight {fightText :: String, defeatedText :: String, lifepoints :: Int, lifeName :: String, object :: Object} | Platform | Random
+data LevelType = Fight {enemyLifePoints :: Int, item :: Object} | Platform | Random
   deriving (Show)
 
 data Level = Level
   { name :: String,
     leveltype :: LevelType,
     description :: String,
-    necessary_items :: [Object]
+    necessaryItems :: [Object]
   }
   deriving (Show)
 
