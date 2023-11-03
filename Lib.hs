@@ -3,9 +3,10 @@
 
 module Lib where
 
-import Constants
 import Data.List
+import ErrorMessages
 import GHC.Utils.Panic.Plain (PlainGhcException)
+import StartPlayer
 import System.Random
 import Types
 
@@ -44,9 +45,10 @@ getAction = do
   input <- getLine
   case parse input of
     Nothing -> do
-      putStrLn "This is not a valid action. Perhaps you misstyped?"; getAction
+      putStrLn _ILLFORMED_INPUT; getAction
     Just a -> return a
 
+-- | Displays message and returns the game instance unchanged
 displayMessage :: String -> GameInstance -> IO GameInstance
 displayMessage message game = do
   putStrLn message
@@ -70,7 +72,7 @@ matchingName level target_location = name (root level) == target_location
 -- | Returns Nothing if the destination does not match any accessssible child
 -- | or parent node.
 transition :: TreeZip Level -> String -> Maybe (TreeZip Level)
--- NOTE: I think this whole case should never run
+-- NOTE: The first case should be impossible to run into
 transition (TreeZip ctx Leaf) destination =
   if destination == "back"
     then Just (goBack (TreeZip ctx Leaf))
@@ -102,12 +104,15 @@ modifyPos :: TreeZip Level -> Level -> TreeZip Level
 modifyPos (TreeZip ctx Leaf) new_world = TreeZip ctx (mkTerminalNode new_world)
 modifyPos (TreeZip ctx (Node old_world ll l r rr)) new_world = TreeZip ctx (Node new_world ll l r rr)
 
--- | Tells if you are allowed to go to the node in the current GameInstance
+-- | Checks if the conditions to enter the node are met
+-- | Implementation note: at the moment this checks
+-- |                      whether some item is in the inventory
 unlocked :: Player -> TreeZip Level -> Bool
 unlocked _ (TreeZip ctx Leaf) = False -- Can't go to leaves, should not happen anyway
 unlocked (Player _ _ inventory) (TreeZip _ (Node level _ _ _ _)) =
   intersect (necessaryItems level) inventory == necessaryItems level
 
+-- | Moves the focus to Helheim, leaving the tree unchanged
 respawnPlayer :: TreeZip Level -> TreeZip Level
 respawnPlayer t = t
 
@@ -130,7 +135,8 @@ playerVictory player_move enemy_move
       Just True
   | otherwise = Just False
 
--- | Adds object effect to the player
+-- | Adds item to the player inventory, and updates
+-- | the player stats based on the specific item
 updatePlayer :: Player -> Object -> IO Player
 updatePlayer (Player life_points attack_damage inventory) item =
   case item of
@@ -141,25 +147,29 @@ updatePlayer (Player life_points attack_damage inventory) item =
       putStrLn "You now have 5 extra life points."
       return (Player (life_points + 5) attack_damage new_inventory)
     _ -> do
-      putStrLn (item ++ " has been added to your invetory.")
+      putStrLn (item ++ " has been added to your inventory.")
       return (Player life_points attack_damage new_inventory)
   where
     new_inventory = item : inventory
 
+-- | Update a fight level after the player has won a round.
+-- | If the enemy is defeated, replaces the level description with the new text
+-- | to be used after victory, and triggers the reward. Otherwise, updates
+-- | the enemy's health. Note: enemies do not regenerate health.
 updateWorld :: QuadTree Level -> Player -> IO (QuadTree Level, Player)
-updateWorld (Node (Level n (Fight victory_text enemy_life_points item) description i) ll l r rr) player =
+updateWorld (Node (Level n (Fight victory_text enemy_life_points item) description lm i) ll l r rr) player =
   if remaining_enemy_life <= 0
     then do
       putStrLn "You have vanquished your enemy."
       putStrLn ("As he flees, he leaves his " ++ item ++ " behind.")
       putStrLn "You take it for yourself."
       new_player <- updatePlayer player item
-      return (new_world, new_player)
-    else return (old_world, player)
+      return (victory_world, new_player)
+    else return (new_world, player)
   where
     remaining_enemy_life = enemy_life_points - attackDamage player
-    new_world = Node (Level n (Fight victory_text remaining_enemy_life item) victory_text i) l ll r rr
-    old_world = Node (Level n (Fight victory_text remaining_enemy_life item) description i) l ll r rr
+    victory_world = Node (Level n (Fight victory_text remaining_enemy_life item) victory_text lm i) l ll r rr
+    new_world = Node (Level n (Fight victory_text remaining_enemy_life item) description lm i) l ll r rr
 updateWorld level player = return (level, player)
 
 --------------------------------------------------------------------------------
@@ -168,23 +178,24 @@ updateWorld level player = return (level, player)
 
 --------------------------------------------------------------------------------
 
+-- | Updates the game based on the player action.
+-- | Handles eventual invalid actions.
 evolve :: Action -> GameInstance -> IO GameInstance
 evolve Help game = do
   displayMessage _HELP_MSG game
 evolve Look game = do
-  displayMessage "The look command is yet to be implemented." game
+  displayMessage _UNIMPLEMENTED game
+evolve ShowMap game = do
+  displayMessage _UNIMPLEMENTED game
 evolve (Move destination) (Game current_world player) =
   case transition current_world destination of
     Nothing ->
-      displayMessage
-        "It would seem the place you want to go to does not exist, \
-        \or is inaccessible from your current location."
-        (Game current_world player)
+      displayMessage _INVALID_MOVE (Game current_world player)
     Just new_world ->
       if unlocked player new_world
         then return (Game new_world player)
         else do
-          putStrLn "You are not worthy enough to do this right now...\n"
+          putStrLn (lockMessage (root (tree new_world)))
           return (Game current_world player)
 evolve (Attack player_move) (Game current_world player) =
   case leveltype current_node of
@@ -192,7 +203,7 @@ evolve (Attack player_move) (Game current_world player) =
       if enemy_life_points <= 0
         then
           displayMessage
-            "There is no one to fight here anymore."
+            "\nThere is no one to fight here anymore.\n"
             (Game current_world player)
         else do
           move_int <- randomRIO (1, 3) :: IO Int
@@ -214,18 +225,14 @@ evolve (Attack player_move) (Game current_world player) =
               return (Game (TreeZip (context current_world) new_level) new_player)
             Just False -> do
               putStrLn
-                ( "You were no match for your opponent. You have "
+                ( "\nYou were no match for your opponent. You have "
                     ++ show (lifePoints player - 1)
                     ++ " life points left."
                 )
               if (lifePoints player - 1) == 0
                 then do
-                  putStrLn "Oh No! You died!"
-                  return
-                    ( Game
-                        (respawnPlayer current_world)
-                        (Player _DEFAULT_LIFE_POINTS _DEFAULT_DAMAGE [])
-                    )
+                  putStrLn "\nOh No! You died!"
+                  return (Game (respawnPlayer current_world) _START_PLAYER)
                 else
                   return
                     ( Game
@@ -236,10 +243,8 @@ evolve (Attack player_move) (Game current_world player) =
                             (inventory player)
                         )
                     )
-            Nothing -> do putStrLn "Neither managed to best the other"; return (Game current_world player)
+            Nothing -> do putStrLn "\nNeither managed to best the other"; return (Game current_world player)
     _ ->
-      displayMessage
-        "This is no place for violence."
-        (Game current_world player)
+      displayMessage _INVALID_ATTACK (Game current_world player)
   where
     current_node = root (tree current_world)

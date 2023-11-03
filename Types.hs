@@ -33,6 +33,7 @@ data Level = Level
   { name :: String,
     leveltype :: LevelType,
     description :: String,
+    lockMessage :: String,
     necessaryItems :: [Object]
   }
   deriving (Show)

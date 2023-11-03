@@ -2,43 +2,21 @@
 
 module Game where
 
-import Constants
 import Data.List
 import Data.Set (fromList)
 import GHC.Core.TyCon (newTyConEtadArity)
 import Levels
 import Lib
+import StartPlayer
+import StartWorld
 import System.Random ()
 import Types
-
-_START_WORLD :: TreeZip Level =
-  TreeZip
-    TOP
-    ( Node
-        roots
-        ( Node
-            muspelheim
-            (mkTerminalNode giantFight)
-            Leaf
-            Leaf
-            Leaf
-        )
-        (mkTerminalNode mimirs_lake)
-        (mkTerminalNode helheim)
-        ( Node
-            midgard
-            (mkTerminalNode asgard)
-            (mkTerminalNode alvheim)
-            Leaf
-            Leaf
-        )
-    )
 
 -- | Print the nodes the user has visited so far
 displayMap :: GameInstance -> IO ()
 displayMap _ = putStrLn "TBD"
 
--- | Runs the main game loop
+-- | Runs the main game input - eval loop
 gameLoop :: GameInstance -> IO GameInstance
 gameLoop current_game = do
   putStrLn (description current_node)
@@ -66,8 +44,8 @@ gameLoop current_game = do
   where
     current_node = root (tree (gamezip current_game))
 
--- we need smth like 'entry' which runs when we enter the node TODO: what do you mean?
+-- | Game Intro point
 runGame :: IO ()
 runGame = do
-  gameLoop (Game _START_WORLD (Player 10 1 []))
+  gameLoop (Game _START_WORLD _START_PLAYER)
   return ()

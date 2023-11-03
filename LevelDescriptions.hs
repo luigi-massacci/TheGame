@@ -1,24 +1,7 @@
-module Constants where
-
-_DEFAULT_LIFE_POINTS :: Int = 5
-
-_DEFAULT_DAMAGE :: Int = 2
-
-_HELP_MSG :: String =
-  "\n\nWelcome! \n\
-  \You can use the following commands: \n\
-  \1) <help>: Displays this message\n\n\
-  \Navigation:\n\
-  \2) <go to PLACE_NAME>: Moves to PLACE_NAME. You will be told the possible places you can go to \n\
-  \                       whenever you enter a node.\n\
-  \3) <go back>: Return to the parent node\n\
-  \4) <show map> : Prints the part of the tree you have currently explored\n\
-  \5) <look> : TBD \n\n\
-  \Fight: \n\
-  \6) <rock> or <paper> or <scissors>: Plays the respective choice."
+module LevelDescriptions where
 
 _ROOTS_DESCRIPTION :: String =
-  "\n\nYou stand among the roots of Yggradsil, the world tree.\
+  "\nYou stand among the roots of Yggradsil, the world tree.\
   \Its bark is tougher than steel, and older than the universe.\n\
   \On and on it stretches upwards, farther than you could possibly ever see.\n\
   \High above you lie the great planes and all of their inhabitants. You feel very tiny indeed.\n\n\
@@ -34,7 +17,7 @@ _ROOTS_DESCRIPTION :: String =
   \distinguish a clear LAKE, and a light shining brilliantly from its center. What could possibly be there?\n\n"
 
 _MIDGARD_DESCRIPTION :: String =
-  "\n\nYou have arrived in Midgard, the land of mortal men.\
+  "\nYou have arrived in Midgard, the land of mortal men.\
   \Breathing comes easily here, and the sun shines upon your face. Overall, it is quite pleasant.\n\n\
   \The most magnificent sight of all lies before your eyes: the great rainbow bridge connecting Midgard to ASGARD,\n\
   \home of the Gods. Who knows what wanders lie beyond?\n\n\
@@ -45,17 +28,36 @@ _MIDGARD_DESCRIPTION :: String =
   \as if made of gold. There must be great riches to be claimed and glory to be won."
 
 _MUSPELHEIM_DESCRIPTION :: String =
-  "\n\nYou've reached the borders of Muspelheim, land of the fire giants. The ground is covered by a thick layer of ash,\n\
+  "\nYou've reached the borders of Muspelheim, land of the fire giants. The ground is covered by a thick layer of ash,\n\
   \and scarred by rivers of lava. You struggle to breathe, and the sky is blackened by the smoke from the many raging fires.\n\
   \Here and there you see giants clothed in flames going about their way.\n\
   \At the top of a mountain, sitting on a trone of black stone is SURTR, king of the giants."
 
-_SURTR_FIGHT :: String = "\n\nHe has a shining sword laying on his lap. He looks at you and sneers."
+_SURTR_FIGHT :: String =
+  "\nYou stand before the king of the giants, the one who will eveventually burn\n\
+  \the world. He does not rise to greet you, and merely continues to polish the shining sword laying on his lap.\n\
+  \At his feet lie the skulls of a thousand brave adventurers. He looks at you and smiles."
 
-_SURTR_VICTORY :: String = "TBD victory"
+_SURTR_VICTORY :: String =
+  "\nThe king of the giants bows before you, recognizing a hero of true valor. Not even the god of thunder\n\
+  \can claim to have ever defeated the child of fire. He will remeber the day until ythe end of times."
+
+_FAFNIR_VICTORY :: String = ""
+
+_FAFNIR_FIGHT :: String = ""
+
+_FEANOR_VICTORY :: String = ""
+
+_FEANOR_FIGHT :: String = ""
+
+_VANHEIM_LOCK :: String = "\nThat branch is impossibly high. If Only you could fly..."
+
+_ASGARD_LOCK :: String =
+  "\nHeimdall, Warden of the Gods, bids you to halt.\n\
+  \Only a here hailed three times champion may alk the Bifrost. Bring him proof of your valor."
 
 _LAKE_DESCRIPTION :: String =
-  "\n\nHere you are, at the furthermost corner of the Tree anybody has ever explored. Even the Allfather never\n\
+  "\nHere you are, at the furthermost corner of the Tree anybody has ever explored. Even the Allfather never\n\
   \never went beyond this point. The water in the pool is impossibly clear, and yet startngly blue.\n\
   \Even from here you cannot tell what the source of the light at the center is.\n\
   \Perhaps you should wade in and take a closer look?"
