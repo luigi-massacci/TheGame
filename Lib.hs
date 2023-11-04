@@ -256,9 +256,6 @@ evolve (Attack player_move) (Game current_world player) =
 
 
 -- TO DISPLAY
-
-
-
 -- if visited make it green, otherwise red
 
 setColor :: String -> String -> String
@@ -299,3 +296,15 @@ displayMap game = do
     putStr "Enter anything to continue: "
     input <- getLine
     return game
+
+
+-- Random nodes
+-- whenever there are leaves available, we can make random nodes.
+
+-- for evolve, make a new tree and put it in the place of leaves. So maybe change leave with this new thing which ends with leaves. 
+-- "go to branch" brings there if available.
+
+-- make this Maybe and if leaf doesn't exist give Nothing
+--graft :: QuadTree -> Int -> TreeZip -> QuadTree
+--graft g 0 (c,t) = (c, )
+--graft_right g (c,t) = (c,B t g)

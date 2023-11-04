@@ -1,6 +1,6 @@
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 
-module GameMain where
+module Main where
 
 import Data.List
 import Data.Set (fromList)
@@ -56,3 +56,5 @@ runGame :: IO ()
 runGame = do
   gameLoop (Game _START_WORLD _START_PLAYER)
   return ()
+
+main = runGame
