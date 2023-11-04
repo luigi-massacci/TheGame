@@ -34,7 +34,8 @@ data Level = Level
     leveltype :: LevelType,
     description :: String,
     lockMessage :: String,
-    necessaryItems :: [Object]
+    necessaryItems :: [Object],
+    visited :: Bool
   }
   deriving (Show)
 

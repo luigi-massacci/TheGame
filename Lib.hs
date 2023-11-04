@@ -157,8 +157,9 @@ updatePlayer (Player life_points attack_damage inventory) item =
 -- | If the enemy is defeated, replaces the level description with the new text
 -- | to be used after victory, and triggers the reward. Otherwise, updates
 -- | the enemy's health. Note: enemies do not regenerate health.
+
 updateWorld :: QuadTree Level -> Player -> IO (QuadTree Level, Player)
-updateWorld (Node (Level n (Fight victory_text enemy_life_points item) description lm i) ll l r rr) player =
+updateWorld (Node (Level n (Fight victory_text enemy_life_points item) description lm i _) ll l r rr) player =
   if remaining_enemy_life <= 0
     then do
       putStrLn "You have vanquished your enemy."
@@ -169,8 +170,8 @@ updateWorld (Node (Level n (Fight victory_text enemy_life_points item) descripti
     else return (new_world, player)
   where
     remaining_enemy_life = enemy_life_points - attackDamage player
-    victory_world = Node (Level n (Fight victory_text remaining_enemy_life item) victory_text lm i) l ll r rr
-    new_world = Node (Level n (Fight victory_text remaining_enemy_life item) description lm i) l ll r rr
+    victory_world = Node (Level n (Fight victory_text remaining_enemy_life item) victory_text lm i True) l ll r rr
+    new_world = Node (Level n (Fight victory_text remaining_enemy_life item) description lm i True) l ll r rr
 updateWorld level player = return (level, player)
 
 --------------------------------------------------------------------------------
@@ -187,7 +188,8 @@ evolve Help game = do
 evolve Look game = do
   displayMessage _UNIMPLEMENTED game
 evolve ShowMap game = do
-  displayMessage _UNIMPLEMENTED game
+  displayMap game
+  
 evolve (Move destination) (Game current_world player) =
   case transition current_world destination of
     Nothing ->
@@ -249,3 +251,51 @@ evolve (Attack player_move) (Game current_world player) =
       displayMessage _INVALID_ATTACK (Game current_world player)
   where
     current_node = root (tree current_world)
+
+
+
+
+-- TO DISPLAY
+
+
+
+-- if visited make it green, otherwise red
+
+setColor :: String -> String -> String
+setColor colorCode text = "\x1b[" ++ colorCode ++ "m" ++ text ++ "\x1b[0m"
+
+plug :: Context Level -> QuadTree Level -> QuadTree Level
+plug TOP t = t
+plug (LL n cntx t2 t3 t4) t = plug cntx (Node n t t2 t3 t4)
+plug (L n t1 cntx t3 t4) t = plug cntx (Node n t1 t t3 t4)
+plug (R n t1 t2 cntx t4) t = plug cntx (Node n t1 t2 t t4)
+plug (RR n t1 t2 t3 cntx) t = plug cntx (Node n t1 t2 t3 t)
+
+reconstruct :: TreeZip Level -> QuadTree Level
+reconstruct gamezip = plug (context gamezip) (new_tree) where
+                          new_tree = case (tree gamezip) of 
+                            Leaf -> Leaf
+                            Node n t1 t2 t3 t4 -> Node (n { name = (name n) ++ (setColor "34" " <- You are here")}) t1 t2 t3 t4
+
+drawQuadTree :: QuadTree Level -> String
+drawQuadTree tree = draw tree 0
+  where
+    draw :: QuadTree Level -> Int -> String
+    draw Leaf _ = ""
+    draw (Node root ll l r rr) depth =
+      replicate (depth) ' ' ++ replicate (depth) '\\' ++ (setColor color (name root)) ++ "\n" ++
+      drawChild "LL" ll ++
+      drawChild "L " l ++
+      drawChild "R " r ++
+      drawChild "RR" rr
+      where
+        drawChild name child = draw child (depth + 1)
+        color = if (visited (root)) then "32" else "31"
+
+-- | Print the nodes the user has visited so far
+displayMap :: GameInstance -> IO GameInstance
+displayMap game = do
+    putStrLn (drawQuadTree (reconstruct (gamezip game)))
+    putStr "Enter anything to continue: "
+    input <- getLine
+    return game

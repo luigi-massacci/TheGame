@@ -12,13 +12,19 @@ import StartWorld
 import System.Random ()
 import Types
 
--- | Print the nodes the user has visited so far
-displayMap :: GameInstance -> IO ()
-displayMap _ = putStrLn "TBD"
+markVisited :: GameInstance -> GameInstance
+markVisited game = Game
+  { gamezip = updatedTreeZip,
+    player = player game
+  }
+  where
+    new_root = (root (tree (gamezip game))) {visited = True}
+    new_tree = (tree (gamezip game)) {root = new_root}
+    updatedTreeZip = (gamezip game) { tree = new_tree }
 
 -- | Runs the main game input - eval loop
 gameLoop :: GameInstance -> IO GameInstance
-gameLoop current_game = do
+gameLoop game = do
   putStrLn (description current_node)
   case leveltype current_node of
     Fight vt enemy_life_points _ ->
@@ -43,6 +49,7 @@ gameLoop current_game = do
   gameLoop new_game
   where
     current_node = root (tree (gamezip current_game))
+    current_game = markVisited game
 
 -- | Game Intro point
 runGame :: IO ()
