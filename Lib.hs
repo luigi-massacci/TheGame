@@ -72,24 +72,37 @@ matchingName level target_location = name (root level) == target_location
 -- | Compute result of <go *> instruction
 -- | Returns Nothing if the destination does not match any accessssible child
 -- | or parent node.
-transition :: TreeZip Level -> String -> Maybe (TreeZip Level)
+transition :: TreeZip Level -> String -> IO (Maybe (TreeZip Level))
 -- NOTE: The first case should be impossible to run into
-transition (TreeZip ctx Leaf) destination =
+transition (TreeZip ctx Leaf) destination = do
   if destination == "back"
-    then Just (goBack (TreeZip ctx Leaf))
-    else Nothing
+    then return (Just (goBack (TreeZip ctx Leaf)))
+    else return Nothing
 transition (TreeZip current_location (Node current_world ll l r rr)) destination
-  | destination == "back" =
-      Just (goBack (TreeZip current_location (Node current_world ll l r rr)))
-  | matchingName ll destination =
-      Just (TreeZip (LL current_world current_location l r rr) ll)
-  | matchingName l destination =
-      Just (TreeZip (L current_world ll current_location r rr) l)
-  | matchingName r destination =
-      Just (TreeZip (R current_world ll l current_location rr) r)
-  | matchingName rr destination =
-      Just (TreeZip (RR current_world ll l r current_location) rr)
-  | otherwise = Nothing
+  | (destination == "UPPER BRANCH")||(destination == "LOWER BRANCH") = do
+    if matchingName ll destination
+      then do
+        new_tree <- mkTripleTree (root ll)
+        return (Just (TreeZip (LL current_world current_location l r rr) new_tree))
+      else if matchingName l destination
+        then do
+          new_tree <- mkTripleTree (root l)
+          return (Just (TreeZip (L current_world ll current_location r rr) new_tree))
+        else if matchingName r destination
+          then do
+            new_tree <- mkTripleTree (root r)
+            return (Just (TreeZip (R current_world ll l current_location rr) new_tree))
+          else if matchingName rr destination
+            then do
+              new_tree <- mkTripleTree (root rr)
+              return (Just (TreeZip (RR current_world ll l r current_location) new_tree))
+            else return Nothing
+  | destination == "back" = return (Just (goBack (TreeZip current_location (Node current_world ll l r rr))))
+  | matchingName ll destination = return (Just (TreeZip (LL current_world current_location l r rr) ll))
+  | matchingName l destination = return (Just (TreeZip (L current_world ll current_location r rr) l))
+  | matchingName r destination = return (Just (TreeZip (R current_world ll l current_location rr) r))
+  | matchingName rr destination = return (Just (TreeZip (RR current_world ll l r current_location) rr))
+  | otherwise = return Nothing
 
 -- | Move focus to the parent node of the currently focused node
 goBack :: TreeZip Level -> TreeZip Level
@@ -101,9 +114,11 @@ goBack (TreeZip (RR root ll l r ctx) rr) = TreeZip ctx (Node root ll l r rr)
 
 -- |  modifyPos <context> <updated_node> -> <updated_context>
 -- |  Update the currently focused node
-modifyPos :: TreeZip Level -> Level -> TreeZip Level
-modifyPos (TreeZip ctx Leaf) new_world = TreeZip ctx (mkTerminalNode new_world)
-modifyPos (TreeZip ctx (Node old_world ll l r rr)) new_world = TreeZip ctx (Node new_world ll l r rr)
+modifyPos :: TreeZip Level -> Level -> IO (TreeZip Level)
+modifyPos (TreeZip ctx Leaf) new_world = do 
+                                          terminal_node <- mkTerminalNode new_world
+                                          return (TreeZip ctx (terminal_node))
+modifyPos (TreeZip ctx (Node old_world ll l r rr)) new_world = do return (TreeZip ctx (Node new_world ll l r rr))
 
 -- | Checks if the conditions to enter the node are met
 -- | Implementation note: at the moment this checks
@@ -190,8 +205,9 @@ evolve Look game = do
 evolve ShowMap game = do
   displayMap game
   
-evolve (Move destination) (Game current_world player) =
-  case transition current_world destination of
+evolve (Move destination) (Game current_world player) = do
+  tr <- transition current_world destination
+  case tr of
     Nothing ->
       displayMessage _INVALID_MOVE (Game current_world player)
     Just new_world ->
@@ -235,7 +251,8 @@ evolve (Attack player_move) (Game current_world player) =
               if (lifePoints player - 1) == 0
                 then do
                   putStrLn "\nOh No! You died! Perhaps you will have better luck in your next life."
-                  return (Game _START_WORLD _START_PLAYER)
+                  start_world <- _START_WORLD
+                  return (Game start_world _START_PLAYER)
                 else
                   return
                     ( Game
@@ -280,7 +297,6 @@ drawQuadTree tree = draw tree 0
     draw :: QuadTree Level -> Int -> String
     draw Leaf _ = ""
     draw (Node root ll l r rr) depth =
-      if ((name root) == "UPPER BRANCH" || (name root) == "LOWER BRANCH") && (visited root == False) then "" else
       replicate (depth*5) ' ' ++ replicate (depth) '\\' ++ (setColor color (name root)) ++ "\n" ++
       drawChild "LL" ll ++
       drawChild "L " l ++

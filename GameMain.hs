@@ -11,6 +11,7 @@ import StartPlayer
 import StartWorld
 import System.Random ()
 import Types
+import RandomTexts
 
 
 markVisited :: GameInstance -> GameInstance
@@ -55,7 +56,8 @@ gameLoop game = do
 -- | Game Intro point
 runGame :: IO ()
 runGame = do
-  gameLoop (Game _START_WORLD _START_PLAYER)
+  start_world <- _START_WORLD
+  gameLoop (Game start_world _START_PLAYER)
   return ()
 
 main = runGame
