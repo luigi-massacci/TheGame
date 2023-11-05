@@ -14,11 +14,11 @@ _START_WORLD :: TreeZip Level =
             ( Node
                 swartelheim
                 (mkTerminalNode fafnir)
-                Leaf
+                mkBranch
                 Leaf
                 Leaf
             )
-            Leaf
+            mkBranch
             Leaf
         )
         (mkTerminalNode mimirs_lake)
@@ -30,10 +30,10 @@ _START_WORLD :: TreeZip Level =
                 alvheim
                 (mkTerminalNode vanheim)
                 (mkTerminalNode feanor)
-                Leaf
+                mkBranch
                 Leaf
             )
-            Leaf
+            mkBranch
             Leaf
         )
     )

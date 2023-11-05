@@ -12,6 +12,7 @@ import StartWorld
 import System.Random ()
 import Types
 
+
 markVisited :: GameInstance -> GameInstance
 markVisited game = Game
   { gamezip = updatedTreeZip,

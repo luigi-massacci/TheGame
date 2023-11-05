@@ -280,7 +280,8 @@ drawQuadTree tree = draw tree 0
     draw :: QuadTree Level -> Int -> String
     draw Leaf _ = ""
     draw (Node root ll l r rr) depth =
-      replicate (depth) ' ' ++ replicate (depth) '\\' ++ (setColor color (name root)) ++ "\n" ++
+      if ((name root) == "UPPER BRANCH" || (name root) == "LOWER BRANCH") && (visited root == False) then "" else
+      replicate (depth*5) ' ' ++ replicate (depth) '\\' ++ (setColor color (name root)) ++ "\n" ++
       drawChild "LL" ll ++
       drawChild "L " l ++
       drawChild "R " r ++
