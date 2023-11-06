@@ -9,7 +9,7 @@ _HELP_MSG :: String =
   \                       whenever you enter a node.\n\
   \3) <go back>: Return to the parent node\n\
   \4) <show map> : Prints the part of the tree you have currently explored\n\
-  \5) <look> : TBD \n\n\
+  \5) <look> : Displays names and necessary items for each child of the current node\n\n\
   \Fight: \n\
   \6) <rock> or <paper> or <scissors>: Plays the respective choice."
 

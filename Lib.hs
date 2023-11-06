@@ -201,7 +201,7 @@ evolve :: Action -> GameInstance -> IO GameInstance
 evolve Help game = do
   displayMessage _HELP_MSG game
 evolve Look game = do
-  displayMessage _UNIMPLEMENTED game
+  lookAround game
 evolve ShowMap game = do
   displayMap game
   
@@ -311,3 +311,26 @@ displayMap game = do
     putStr "Enter anything to continue: "
     input <- getLine
     return game
+
+-- | Displays all names and necessary items of children of the current node
+lookAround :: GameInstance -> IO GameInstance
+lookAround game = do
+  let lltree = ll $ tree $ gamezip game
+  let ltree = l $ tree $ gamezip game
+  let rtree = r $ tree $ gamezip game
+  let rrtree = rr $ tree $ gamezip game
+
+  printIfNotLeaf lltree
+  printIfNotLeaf ltree
+  printIfNotLeaf rtree
+  printIfNotLeaf rrtree
+
+  putStr "Enter anything to continue: "
+  input <- getLine
+  return game
+
+printIfNotLeaf :: QuadTree Level -> IO ()
+printIfNotLeaf Leaf = return ()
+printIfNotLeaf (Node level _ _ _ _) = do
+  putStrLn (name level)
+  putStrLn (concatMap show (necessaryItems level))
