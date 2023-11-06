@@ -269,15 +269,11 @@ evolve (Attack player_move) (Game current_world player) =
   where
     current_node = root (tree current_world)
 
-
-
-
--- TO DISPLAY
--- if visited make it green, otherwise red
-
+-- | Running through this changes color of the text, used for displaying map on show map
 setColor :: String -> String -> String
-setColor colorCode text = "\x1b[" ++ colorCode ++ "m" ++ text ++ "\x1b[0m"
+setColor color_code text = "\x1b[" ++ color_code ++ "m" ++ text ++ "\x1b[0m"
 
+-- | Plugs into the hole (for reconstructing the tree)
 plug :: Context Level -> QuadTree Level -> QuadTree Level
 plug TOP t = t
 plug (LL n cntx t2 t3 t4) t = plug cntx (Node n t t2 t3 t4)
@@ -285,12 +281,14 @@ plug (L n t1 cntx t3 t4) t = plug cntx (Node n t1 t t3 t4)
 plug (R n t1 t2 cntx t4) t = plug cntx (Node n t1 t2 t t4)
 plug (RR n t1 t2 t3 cntx) t = plug cntx (Node n t1 t2 t3 t)
 
+-- | Reconstructs the full (so far generated) map
 reconstruct :: TreeZip Level -> QuadTree Level
 reconstruct gamezip = plug (context gamezip) (new_tree) where
                           new_tree = case (tree gamezip) of 
                             Leaf -> Leaf
                             Node n t1 t2 t3 t4 -> Node (n { name = (name n) ++ (setColor "34" " <- You are here")}) t1 t2 t3 t4
 
+-- | Given a quadtree draws a tree. Visited nodes are in green, Non-visited nodes are in red.
 drawQuadTree :: QuadTree Level -> String
 drawQuadTree tree = draw tree 0
   where
@@ -306,22 +304,10 @@ drawQuadTree tree = draw tree 0
         drawChild name child = draw child (depth + 1)
         color = if (visited (root)) then "32" else "31"
 
--- | Print the nodes the user has visited so far
+-- | Final function for displaying the map
 displayMap :: GameInstance -> IO GameInstance
 displayMap game = do
     putStrLn (drawQuadTree (reconstruct (gamezip game)))
     putStr "Enter anything to continue: "
     input <- getLine
     return game
-
-
--- Random nodes
--- whenever there are leaves available, we can make random nodes.
-
--- for evolve, make a new tree and put it in the place of leaves. So maybe change leave with this new thing which ends with leaves. 
--- "go to branch" brings there if available.
-
--- make this Maybe and if leaf doesn't exist give Nothing
---graft :: QuadTree -> Int -> TreeZip -> QuadTree
---graft g 0 (c,t) = (c, )
---graft_right g (c,t) = (c,B t g)

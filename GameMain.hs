@@ -13,7 +13,7 @@ import System.Random ()
 import Types
 import RandomTexts
 
-
+-- | Marks current node as visited, used for displaying tree correctly on show map
 markVisited :: GameInstance -> GameInstance
 markVisited game = Game
   { gamezip = updatedTreeZip,
