@@ -1,4 +1,9 @@
 # TheGame
+To run two options:
 
-##TO DO
-- Implement respwan / better death mechanic
+Interpreter: 
+>> ghci GameMain
+ghci> runGame
+
+Compiler:
+ghc GameMain

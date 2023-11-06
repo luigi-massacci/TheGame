@@ -42,7 +42,7 @@ parse input
 -- | (see <evolve> for the error handling)
 getAction :: IO Action
 getAction = do
-  putStr ">> "
+  putStrLn ">> "
   input <- getLine
   case parse input of
     Nothing -> do
@@ -53,7 +53,7 @@ getAction = do
 displayMessage :: String -> GameInstance -> IO GameInstance
 displayMessage message game = do
   putStrLn message
-  putStr "Enter anything to continue: "
+  putStrLn "Enter anything to continue: "
   input <- getLine
   return game
 
@@ -308,7 +308,7 @@ drawQuadTree tree = draw tree 0
 displayMap :: GameInstance -> IO GameInstance
 displayMap game = do
     putStrLn (drawQuadTree (reconstruct (gamezip game)))
-    putStr "Enter anything to continue: "
+    putStrLn "Enter anything to continue: "
     input <- getLine
     return game
 
@@ -325,7 +325,7 @@ lookAround game = do
   printIfNotLeaf rtree
   printIfNotLeaf rrtree
 
-  putStr "Enter anything to continue: "
+  putStrLn "Enter anything to continue: "
   input <- getLine
   return game
 
