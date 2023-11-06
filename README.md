@@ -1,9 +1,12 @@
 # TheGame
 To run two options:
 
-Interpreter: 
->> ghci GameMain
+Interpreter:
+
+$> ghci GameMain
+
 ghci> runGame
 
 Compiler:
+
 ghc GameMain
