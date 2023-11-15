@@ -5,6 +5,7 @@ module Types where
 import Data.List
 import Data.Set (fromList)
 import GHC.Core.TyCon (newTyConEtadArity)
+import LevelDescriptions
 import RandomTexts
 import System.Random
 
@@ -55,8 +56,7 @@ mkBranch :: IO (QuadTree Level)
 mkBranch = do
   upper_branch <- mkRandomTree "UPPER BRANCH"
   lower_branch <- mkRandomTree "LOWER BRANCH"
-  let text = "Upon the great root you stand, a colossal branch stretching beyond sight. From this vantage point, the path unfolds, offering you two distinct choices. You may ascend to the LOWER BRANCH, where new and mysterious adventures await, or you may opt for the UPPER BRANCH, its secrets hidden in the misty reaches of the cosmos.\n\nWhichever path you choose, be aware that the journey is not without its challenges. From each branch, your destiny can be shaped, ascending to greater heights through UPPER BRANCHes or descending to deeper mysteries through LOWER BRANCHes"
-  return (Node (Level "BRANCH" Platform text "" [] False) upper_branch lower_branch Leaf Leaf)
+  return (Node (Level "BRANCH" Platform _BRANCH_TEXT "" [] False) upper_branch lower_branch Leaf Leaf)
 
 -- | Given level, adds two random nodes (upper and lower branches). Used to extend a node.
 mkTripleTree :: Level -> IO (QuadTree Level)

@@ -88,3 +88,6 @@ _LAKE_DESCRIPTION :: String =
   \never went beyond this point. The water in the pool is impossibly clear, and yet startngly blue.\n\
   \Even from here you cannot tell what the source of the light at the center is.\n\
   \Perhaps you should wade in and take a closer look?"
+
+_BRANCH_TEXT :: String =
+  "Upon the great root you stand, a colossal branch stretching beyond sight. From this vantage point, the path unfolds, offering you two distinct choices. You may ascend to the LOWER BRANCH, where new and mysterious adventures await, or you may opt for the UPPER BRANCH, its secrets hidden in the misty reaches of the cosmos.\n\nWhichever path you choose, be aware that the journey is not without its challenges. From each branch, your destiny can be shaped, ascending to greater heights through UPPER BRANCHes or descending to deeper mysteries through LOWER BRANCHes"
