@@ -3,6 +3,7 @@
 
 module Lib where
 
+import Data.Char
 import Data.List
 import ErrorMessages
 import GHC.Utils.Panic.Plain (PlainGhcException)
@@ -27,7 +28,7 @@ parse :: String -> Maybe Action
 parse "" = Nothing
 parse input
   | take 7 input == "go back" = Just (Move "back")
-  | take 6 input == "go to " = Just (Move (drop 6 input))
+  | take 6 input == "go to " = Just (Move (drop 6 (map toUpper input)))
   | take 4 input == "look" = Just Look
   | take 4 input == "help" = Just Help
   | take 8 input == "show map" = Just ShowMap
