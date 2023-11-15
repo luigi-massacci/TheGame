@@ -8,6 +8,7 @@ import ErrorMessages
 import GHC.Utils.Panic.Plain (PlainGhcException)
 import StartPlayer
 import StartWorld (_START_WORLD)
+import System.IO
 import System.Random
 import Types
 
@@ -42,8 +43,10 @@ parse input
 -- | (see <evolve> for the error handling)
 getAction :: IO Action
 getAction = do
-  putStrLn ">> "
+  putStr ">> "
+  hFlush stdout
   input <- getLine
+
   case parse input of
     Nothing -> do
       putStrLn _ILLFORMED_INPUT; getAction
@@ -69,6 +72,27 @@ matchingName :: QuadTree Level -> String -> Bool
 matchingName Leaf target_location = False
 matchingName level target_location = name (root level) == target_location
 
+-- | Compute result of <go *> instruction into a random branch
+-- | Returns Nothing if the destination is not accessible
+transitionRandom :: TreeZip Level -> String -> IO (Maybe (TreeZip Level))
+transitionRandom (TreeZip ctx Leaf) destination = return Nothing
+transitionRandom (TreeZip current_location (Node current_world ll l r rr)) destination = do
+  let choice
+        | matchingName ll destination = do
+            new_tree <- mkTripleTree (root ll)
+            return (Just (TreeZip (LL current_world current_location l r rr) new_tree))
+        | matchingName l destination = do
+            new_tree <- mkTripleTree (root l)
+            return (Just (TreeZip (L current_world ll current_location r rr) new_tree))
+        | matchingName r destination = do
+            new_tree <- mkTripleTree (root r)
+            return (Just (TreeZip (R current_world ll l current_location rr) new_tree))
+        | matchingName rr destination = do
+            new_tree <- mkTripleTree (root rr)
+            return (Just (TreeZip (RR current_world ll l r current_location) new_tree))
+        | otherwise = return Nothing
+  choice
+
 -- | Compute result of <go *> instruction
 -- | Returns Nothing if the destination does not match any accessssible child
 -- | or parent node.
@@ -79,24 +103,8 @@ transition (TreeZip ctx Leaf) destination = do
     then return (Just (goBack (TreeZip ctx Leaf)))
     else return Nothing
 transition (TreeZip current_location (Node current_world ll l r rr)) destination
-  | (destination == "UPPER BRANCH")||(destination == "LOWER BRANCH") = do
-    if matchingName ll destination
-      then do
-        new_tree <- mkTripleTree (root ll)
-        return (Just (TreeZip (LL current_world current_location l r rr) new_tree))
-      else if matchingName l destination
-        then do
-          new_tree <- mkTripleTree (root l)
-          return (Just (TreeZip (L current_world ll current_location r rr) new_tree))
-        else if matchingName r destination
-          then do
-            new_tree <- mkTripleTree (root r)
-            return (Just (TreeZip (R current_world ll l current_location rr) new_tree))
-          else if matchingName rr destination
-            then do
-              new_tree <- mkTripleTree (root rr)
-              return (Just (TreeZip (RR current_world ll l r current_location) new_tree))
-            else return Nothing
+  | destination `elem` ["UPPER BRANCH", "LOWER BRANCH"] =
+      transitionRandom (TreeZip current_location (Node current_world ll l r rr)) destination
   | destination == "back" = return (Just (goBack (TreeZip current_location (Node current_world ll l r rr))))
   | matchingName ll destination = return (Just (TreeZip (LL current_world current_location l r rr) ll))
   | matchingName l destination = return (Just (TreeZip (L current_world ll current_location r rr) l))
@@ -115,9 +123,9 @@ goBack (TreeZip (RR root ll l r ctx) rr) = TreeZip ctx (Node root ll l r rr)
 -- |  modifyPos <context> <updated_node> -> <updated_context>
 -- |  Update the currently focused node
 modifyPos :: TreeZip Level -> Level -> IO (TreeZip Level)
-modifyPos (TreeZip ctx Leaf) new_world = do 
-                                          terminal_node <- mkTerminalNode new_world
-                                          return (TreeZip ctx (terminal_node))
+modifyPos (TreeZip ctx Leaf) new_world = do
+  terminal_node <- mkTerminalNode new_world
+  return (TreeZip ctx (terminal_node))
 modifyPos (TreeZip ctx (Node old_world ll l r rr)) new_world = do return (TreeZip ctx (Node new_world ll l r rr))
 
 -- | Checks if the conditions to enter the node are met
@@ -172,7 +180,6 @@ updatePlayer (Player life_points attack_damage inventory) item =
 -- | If the enemy is defeated, replaces the level description with the new text
 -- | to be used after victory, and triggers the reward. Otherwise, updates
 -- | the enemy's health. Note: enemies do not regenerate health.
-
 updateWorld :: QuadTree Level -> Player -> IO (QuadTree Level, Player)
 updateWorld (Node (Level n (Fight victory_text enemy_life_points item) description lm i _) ll l r rr) player =
   if remaining_enemy_life <= 0
@@ -204,7 +211,6 @@ evolve Look game = do
   lookAround game
 evolve ShowMap game = do
   displayMap game
-  
 evolve (Move destination) (Game current_world player) = do
   tr <- transition current_world destination
   case tr of
@@ -283,10 +289,11 @@ plug (RR n t1 t2 t3 cntx) t = plug cntx (Node n t1 t2 t3 t)
 
 -- | Reconstructs the full (so far generated) map
 reconstruct :: TreeZip Level -> QuadTree Level
-reconstruct gamezip = plug (context gamezip) (new_tree) where
-                          new_tree = case (tree gamezip) of 
-                            Leaf -> Leaf
-                            Node n t1 t2 t3 t4 -> Node (n { name = (name n) ++ (setColor "34" " <- You are here")}) t1 t2 t3 t4
+reconstruct gamezip = plug (context gamezip) (new_tree)
+  where
+    new_tree = case (tree gamezip) of
+      Leaf -> Leaf
+      Node n t1 t2 t3 t4 -> Node (n {name = name n ++ setColor "34" " <- You are here"}) t1 t2 t3 t4
 
 -- | Given a quadtree draws a tree. Visited nodes are in green, Non-visited nodes are in red.
 drawQuadTree :: QuadTree Level -> String
@@ -295,11 +302,14 @@ drawQuadTree tree = draw tree 0
     draw :: QuadTree Level -> Int -> String
     draw Leaf _ = ""
     draw (Node root ll l r rr) depth =
-      replicate (depth*5) ' ' ++ replicate (depth) '\\' ++ (setColor color (name root)) ++ "\n" ++
-      drawChild "LL" ll ++
-      drawChild "L " l ++
-      drawChild "R " r ++
-      drawChild "RR" rr
+      replicate (depth * 5) ' '
+        ++ replicate (depth) '\\'
+        ++ (setColor color (name root))
+        ++ "\n"
+        ++ drawChild "LL" ll
+        ++ drawChild "L " l
+        ++ drawChild "R " r
+        ++ drawChild "RR" rr
       where
         drawChild name child = draw child (depth + 1)
         color = if (visited (root)) then "32" else "31"
@@ -307,10 +317,10 @@ drawQuadTree tree = draw tree 0
 -- | Final function for displaying the map
 displayMap :: GameInstance -> IO GameInstance
 displayMap game = do
-    putStrLn (drawQuadTree (reconstruct (gamezip game)))
-    putStrLn "Enter anything to continue: "
-    input <- getLine
-    return game
+  putStrLn (drawQuadTree (reconstruct (gamezip game)))
+  putStrLn "Enter anything to continue: "
+  input <- getLine
+  return game
 
 -- | Displays all names and necessary items of children of the current node
 lookAround :: GameInstance -> IO GameInstance
